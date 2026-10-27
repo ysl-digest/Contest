@@ -14,7 +14,7 @@ from .http import HttpClient
 from .models import Contest, Listing
 from .render import render, title
 from .sources import SOURCES
-from .state import State
+from .state import PENDING, State
 
 log = logging.getLogger(__name__)
 
@@ -26,6 +26,7 @@ class Mark:
     listing: Listing
     is_it: bool
     apply_end: date | None = None
+    status: str = "skipped"  # sent · skipped · pending
 
 
 @dataclass
@@ -36,13 +37,16 @@ class RunResult:
     titles: dict[str, str] = field(default_factory=dict)
     collected: int = 0
     failures: dict[str, str] = field(default_factory=dict)
-    deferred: int = 0
     title: str = ""
     body: str = ""
 
     @property
     def non_it(self) -> int:
         return sum(1 for m in self.marks if not m.is_it)
+
+    @property
+    def deferred(self) -> int:
+        return sum(1 for m in self.marks if m.status == PENDING)
 
 
 def collect(http: HttpClient, settings: Settings, names: list[str]) -> tuple[list[Listing], dict[str, str]]:
@@ -58,39 +62,55 @@ def collect(http: HttpClient, settings: Settings, names: list[str]) -> tuple[lis
     return listings, failures
 
 
+def _by_deadline(items: list[Listing]) -> list[Listing]:
+    return sorted(items, key=lambda x: (x.apply_end or date.max, x.key))
+
+
 def run(settings: Settings, http: HttpClient, state: State, today: date, names: list[str],
         use_llm: bool = True, extractor: Extractor | None = None,
         classifier: Classifier | None = None) -> RunResult:
     result = RunResult()
     listings, result.failures = collect(http, settings, names)
     result.collected = len(listings)
-    new = select_new(listings, state.seen(), today, state.seen_titles())
+
+    # 지난 실행에서 이월된 건: 이미 IT로 판정됐으므로 재분류 없이 우선 처리한다
+    pending = []
+    for it in state.pending():
+        if it.apply_end and it.apply_end < today:
+            result.marks.append(Mark(it, True, it.apply_end))  # 이월 중 마감
+        else:
+            pending.append(it)
+    pending_keys = {it.key for it in pending}
+    new = select_new(listings, state.seen() | pending_keys, today, state.seen_titles())
 
     # classify: 전체 신규 건을 IT/비IT로 나눈다. 비IT는 상태에만 기록하고 발송하지 않는다.
     if use_llm and classifier is None:
         classifier = Classifier(settings)
     result.verdicts = classifier.classify(new) if classifier else classify_by_keyword(new)
-    result.titles = {it.key: it.title for it in new}
-    it_items = []
+    result.titles = {it.key: it.title for it in pending + new}
+    new_it = []
     for listing in new:
         if result.verdicts[listing.key].is_it:
-            it_items.append(listing)
+            new_it.append(listing)
         else:
             result.marks.append(Mark(listing, False, listing.apply_end))
-    result.deferred = max(0, len(it_items) - settings.max_items)
-    it_items = it_items[: settings.max_items]
-    log.info("신규 %d건 중 IT %d건 처리 (비IT %d건, 이월 %d건)",
-             len(new), len(it_items), result.non_it, result.deferred)
+    queue = _by_deadline(pending) + _by_deadline(new_it)
+    todo, overflow = queue[: settings.max_items], queue[settings.max_items:]
+    for listing in overflow:
+        result.marks.append(Mark(listing, True, listing.apply_end, PENDING))
+    log.info("신규 %d건(IT %d, 비IT %d) + 이월 %d건 → 처리 %d건, 다음으로 이월 %d건",
+             len(new), len(new_it), result.non_it, len(pending), len(todo), len(overflow))
 
     if use_llm and extractor is None:
         extractor = Extractor(settings, http)
     sources = {name: SOURCES[name](http, settings.max_pages) for name in names}
-    for listing in it_items:
+    for listing in todo:
         try:
             detail = sources[listing.source].fetch(listing)
         except Exception as exc:  # noqa: BLE001
             log.warning("%s 상세 수집 실패: %s", listing.key, exc)
-            continue  # 상태에 기록하지 않아 다음 실행에서 다시 시도
+            result.marks.append(Mark(listing, True, listing.apply_end, PENDING))  # 다음 실행에서 재시도
+            continue
         end = detail.apply_end or listing.apply_end
         if end and end < today:
             result.marks.append(Mark(listing, True, end))
@@ -100,15 +120,17 @@ def run(settings: Settings, http: HttpClient, state: State, today: date, names: 
             result.marks.append(Mark(listing, False, end))
             continue
         result.contests.append(contest)
-        result.marks.append(Mark(listing, True, end))
+        result.marks.append(Mark(listing, True, end, "sent"))
 
+    for src, err in result.failures.items():
+        log.warning("소스 수집 실패 %s: %s", src, err)
     result.title = title(result.contests, today)
-    result.body = render(result.contests, today, result.failures, settings.urgent_days, result.deferred)
+    result.body = render(result.contests, today, settings.urgent_days)
     return result
 
 
 def save_marks(state: State, result: RunResult, today: date, issue: int | None) -> None:
-    sent = {c.key for c in result.contests}
     for m in result.marks:
-        state.mark(m.listing.key, today, m.apply_end, issue if m.listing.key in sent else None,
-                   title=m.listing.title, is_it=m.is_it)
+        sent = m.status == "sent"
+        state.mark(m.listing.key, today, m.apply_end, issue if sent else None, title=m.listing.title,
+                   is_it=m.is_it, status=m.status if not sent or issue else PENDING, listing=m.listing)

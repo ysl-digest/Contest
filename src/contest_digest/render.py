@@ -53,8 +53,7 @@ def title(contests: list[Contest], today: date) -> str:
     return f"[공모전 주간] {today.isoformat()} ({len(contests)}건)"
 
 
-def render(contests: list[Contest], today: date, failures: dict[str, str], urgent_days: int = 7,
-           deferred: int = 0) -> str:
+def render(contests: list[Contest], today: date, urgent_days: int = 7) -> str:
     def end(c: Contest) -> date:
         return date.fromisoformat(c.apply_end) if c.apply_end else date.max
 
@@ -74,17 +73,8 @@ def render(contests: list[Contest], today: date, failures: dict[str, str], urgen
     if rest:
         out += ["## 📋 신규 공모전 (마감순)", ""]
         out += [_block(c, today) + "\n" for c in rest]
-    notes = []
-    if deferred:
-        notes.append(f"- 처리 상한을 넘은 {deferred}건은 다음 주에 발송합니다.")
-    for src, err in failures.items():
-        notes.append(f"- {SOURCE_NAMES.get(src, src)} 수집 실패: {_esc(err)[:200]}")
-    if notes:
-        out += ["## 운영 메모", ""] + notes + [""]
     out += [
         "---",
-        "구독: 저장소 **Watch → Custom → Issues** · 구독 취소: **Unwatch**",
-        "",
         "<sub>출처: 위비티, 링커리어. 원문 본문과 포스터는 재게시하지 않고 링크만 겁니다.</sub>",
     ]
     return "\n".join(out)

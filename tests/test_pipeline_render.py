@@ -13,14 +13,14 @@ def test_render_sections(today):
     body = render(
         [C("wevity:2", "2026-11-20"), C("wevity:1", "2026-10-29", topic="주제 | 파이프"),
          C("linkareer:3", None, needs_review=True, review_reasons=["마감일 확인 불가"])],
-        today, {"linkareer": "ValueError: 구조 변경"}, deferred=2,
+        today,
     )
     urgent, rest = body.split("## 📋")
     assert "wevity:1" in urgent and "D-3" in urgent and "wevity:2" not in urgent
     assert rest.index("wevity:2") < rest.index("linkareer:3")  # 마감일 미확인은 맨 뒤
     assert "주제 \\| 파이프" in body
-    assert "⚠️ 확인 필요" in body and "다음 주에 발송" in body and "링커리어 수집 실패" in body
-    assert "Watch → Custom → Issues" in body
+    assert "⚠️ 확인 필요" in body
+    assert "운영 메모" not in body and "Watch" not in body and "Unwatch" not in body
 
 
 def test_offline_pipeline_no_llm(http, today):
@@ -45,11 +45,50 @@ def test_source_failure_isolated(http, today, monkeypatch):
     assert "linkareer" in result.failures and len(result.contests) == 2
 
 
-def test_max_items_defers(http, today):
+def test_max_items_defers_to_pending_and_prioritizes_next_run(http, today, monkeypatch):
+    from datetime import timedelta
+
+    from contest_digest.pipeline import save_marks
+    from contest_digest.sources import linkareer, wevity
+
     s = Settings()
     s.max_items = 1
-    result = run(s, http, State(), today, ["wevity", "linkareer"], use_llm=False)
-    assert len(result.contests) == 1 and result.deferred == 2
+    state = State()
+    result = run(s, http, state, today, ["wevity", "linkareer"], use_llm=False)
+    assert [c.key for c in result.contests] == ["wevity:900001"] and result.deferred == 2
+    save_marks(state, result, today, issue=1)
+    assert state.items["wevity:900002"]["status"] == "pending"
+    assert state.items["wevity:900002"]["listing"]["url"].endswith("ix=900002")
+    assert "wevity:900002" not in state.seen()
+
+    # 다음 주: 목록에서 사라져도(수집 0건) pending은 재분류 없이 우선 처리된다
+    monkeypatch.setattr(wevity.WevitySource, "collect", lambda self: [])
+    monkeypatch.setattr(linkareer.LinkareerSource, "collect", lambda self: [])
+
+    class NoClassify:
+        def classify(self, listings):
+            assert listings == []  # pending은 분류 대상이 아님
+            return {}
+
+    nxt = today + timedelta(days=1)
+    s.max_items = 5
+    r2 = run(s, http, state, nxt, ["wevity", "linkareer"], use_llm=False, classifier=NoClassify())
+    assert {c.key for c in r2.contests} == {"wevity:900002", "linkareer:800001"} and r2.deferred == 0
+    save_marks(state, r2, nxt, issue=2)
+    assert state.items["wevity:900002"]["status"] == "sent" and "listing" not in state.items["wevity:900002"]
+    assert state.items["wevity:900002"]["first_seen"] == today.isoformat()  # 최초 발견일 유지
+    assert state.pending() == []
+
+
+def test_expired_pending_is_dropped(today):
+    from datetime import timedelta
+
+    from contest_digest.models import Listing
+
+    state = State()
+    old = Listing("wevity", "1", "AI 대회", "u/1", apply_end=today - timedelta(days=1))
+    state.mark(old.key, today, old.apply_end, None, title=old.title, is_it=True, status="pending", listing=old)
+    assert state.pending()[0].apply_end == old.apply_end
 
 
 def test_pipeline_with_classifier_marks_non_it(http, today, tmp_path):

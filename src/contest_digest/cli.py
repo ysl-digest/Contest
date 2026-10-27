@@ -58,7 +58,7 @@ def cmd_run(args, settings: Settings) -> int:
         return 1
     issue = None
     if result.contests:
-        issue = create_issue(settings.github_token, settings.github_repo, result.title, result.body,
+        issue = create_issue(settings.github_token, settings.issue_repo, result.title, result.body,
                              [settings.issue_label])
         logging.info("Issue #%d 생성", issue)
     else:

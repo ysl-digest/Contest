@@ -1,5 +1,12 @@
 # SPEC: Contest-Event-Subscribe
 
+### 저장소 구성 (2026-10-27 분리)
+| 저장소 | 역할 |
+|---|---|
+| [yeseo-bot/Contest](https://github.com/yeseo-bot/Contest) | 코드, 주간 워크플로, `data/state.json` 커밋 (커밋이 매주 생겨 60일 비활성화도 여기서 방지) |
+| [yeseo-bot/Contest-Subscribe](https://github.com/yeseo-bot/Contest-Subscribe) | Issue 발행 전용. 구독자는 여기를 Watch. 코드 커밋이 없어 구독자에게 Issue 알림만 감 |
+- 다른 저장소에 Issue를 쓰려면 `GITHUB_TOKEN`으로는 안 됨 → yeseo-bot 계정의 fine-grained PAT(`ISSUE_TOKEN`, Contest-Subscribe의 Issues 쓰기만)를 씀. Issue 작성자가 사람 계정(yeseo-bot)이 되므로 Watch 메일 문제(§2 GitHub 항목)도 참고 모델과 같은 조건이 됨.
+
 IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub Issue 다이제스트 1건으로 올린다. 저장소를 Watch한 사람은 이 Issue를 알림 메일로 받는다.
 
 > 표기: **[사실]** 직접 확인함 · **[추정]** 근거는 있으나 검증 안 됨 · **(미확인)** 검증 필요
@@ -20,7 +27,7 @@ IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub I
 |---|---|
 | 주기 | 주 1회, 월요일 09시경 KST → cron `47 23 * * 0` (UTC 일요일 23:47, 비정각) |
 | Issue 단위 | 실행 1회당 다이제스트 1건. 제목은 `[공모전 주간] YYYY-MM-DD (N건)` |
-| 구성 | ① 마감임박(7일 이내) ② 나머지(마감일 오름차순) ③ 확인 필요 ④ 수집 실패 소스 |
+| 구성 | ① 마감임박(7일 이내) ② 나머지(마감일 오름차순). 각 항목에 확인 필요 표시. 운영 메모(이월 건수·수집 실패)와 구독 안내 문구는 본문에 넣지 않음 — 수집 실패는 워크플로 로그로 확인 |
 | 신규 0건 | Issue를 만들지 않음 (로그만 남김) |
 | 라벨 | `digest` 1개. 분야별 라벨은 쓰지 않음 (다이제스트라서 의미가 적음) |
 
@@ -32,7 +39,7 @@ IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub I
 | 구조화 | `response_format={"type":"json_schema", strict}` + `provider.require_parameters=true` |
 | 이미지 | 러너에서 다운로드(Referer 포함) → 최대 변 1568px로 리사이즈 → JPEG base64 data URL |
 | 포스터 | 최대 2장. 없으면 텍스트만으로 추출 |
-| 상한 | 실행당 VLM 대상 최대 40건. 넘치는 건은 상태에 기록하지 않아 다음 주로 넘어감 |
+| 상한 | 실행당 VLM 대상 최대 50건. 넘치는 건은 `pending`으로 목록 정보와 함께 저장 → 다음 실행에서 재분류 없이 최우선 처리 (2026-10-27 변경) |
 | 재시도 | 검증 실패 시 같은 모델로 1회 재시도 → 실패하면 대체 모델 1회 → 그래도 실패하면 `needs_review=true` |
 
 ### 추출 스키마 (확정)
@@ -53,10 +60,10 @@ needs_review: bool         review_reasons: [str]
 ### 상태·운영
 | 항목 | 결정 |
 |---|---|
-| 상태 | `data/state.json`을 main에 커밋. 키는 `{source}:{id}`, 값은 `first_seen`·`issue_number` |
+| 상태 | `data/state.json`을 코드 저장소 main에 커밋. 키는 `{source}:{id}`, 값은 `title`·`first_seen`·`apply_end`·`it`·`status`(sent/skipped/pending)·`issue` |
 | 정리 | 마감 후 90일 지난 항목은 상태에서 삭제 |
 | 재알림 | 하지 않음 (마감 연장·내용 수정 모두) |
-| 실패 알림 | 워크플로 실패는 GitHub 기본 메일로 받음. 소스 하나가 실패하면 다이제스트 하단에 표시하고 나머지는 계속 진행 |
+| 실패 알림 | 워크플로 실패는 GitHub 기본 메일로 받음. 소스 하나가 실패하면 로그에 경고를 남기고 나머지는 계속 진행 |
 | 지연 | 같은 호스트에 요청 간 2초 이상 간격, 타임아웃 20초, 재시도 2회(백오프) |
 | User-Agent | 프로젝트명과 저장소 URL을 명시 |
 

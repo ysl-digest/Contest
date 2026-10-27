@@ -1,10 +1,18 @@
-"""처리한 공모전 ID를 저장소 내 JSON으로 관리한다."""
+"""처리한 공모전 ID를 저장소 내 JSON으로 관리한다.
+
+status: sent(발송) · skipped(비IT·마감 등으로 발송 안 함) · pending(IT로 판정됐으나 상한·오류로 이월)
+pending은 목록 메타데이터를 함께 저장해, 목록 페이지에서 밀려나도 다음 실행에서 우선 처리한다.
+"""
 
 from __future__ import annotations
 
 import json
 from datetime import date, timedelta
 from pathlib import Path
+
+from .models import Listing
+
+PENDING = "pending"
 
 
 class State:
@@ -20,7 +28,17 @@ class State:
         return cls(json.loads(path.read_text(encoding="utf-8")))
 
     def seen(self) -> set[str]:
-        return set(self.items)
+        """처리가 끝난(다시 볼 필요 없는) 키. pending은 포함하지 않는다."""
+        return {k for k, v in self.items.items() if v.get("status") != PENDING}
+
+    def pending(self) -> list[Listing]:
+        out = []
+        for v in self.items.values():
+            if v.get("status") == PENDING and v.get("listing"):
+                d = dict(v["listing"])
+                d["apply_end"] = date.fromisoformat(d["apply_end"]) if d.get("apply_end") else None
+                out.append(Listing(**d))
+        return out
 
     def seen_titles(self) -> set[str]:
         from .filters import title_keys
@@ -28,14 +46,21 @@ class State:
         return {k for v in self.items.values() if v.get("title") for k in title_keys(v["title"])}
 
     def mark(self, key: str, today: date, apply_end: date | None, issue_number: int | None,
-             title: str | None = None, is_it: bool | None = None) -> None:
-        self.items[key] = {
+             title: str | None = None, is_it: bool | None = None, status: str | None = None,
+             listing: Listing | None = None) -> None:
+        prev = self.items.get(key, {})
+        item = {
             "title": title,
-            "first_seen": today.isoformat(),
+            "first_seen": prev.get("first_seen") or today.isoformat(),
             "apply_end": apply_end.isoformat() if apply_end else None,
             "it": is_it,
+            "status": status or ("sent" if issue_number else "skipped"),
             "issue": issue_number,
         }
+        if item["status"] == PENDING and listing:
+            item["listing"] = {**listing.__dict__,
+                               "apply_end": listing.apply_end.isoformat() if listing.apply_end else None}
+        self.items[key] = item
 
     def prune(self, today: date, retention_days: int) -> None:
         """마감 후 retention_days가 지난 항목을 지운다. 마감일을 모르면 first_seen 기준."""

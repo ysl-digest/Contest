@@ -10,13 +10,13 @@ on:
         type: boolean
         default: true
       max_items:
-        description: "VLM 처리 상한 (비우면 기본값 40)"
+        description: "VLM 처리 상한 (비우면 기본값 50)"
         type: string
         default: ""
 
+# Issue는 별도 저장소(vars.ISSUE_REPO)에 ISSUE_TOKEN으로 발행하므로 이 저장소에는 상태 커밋 권한만 필요
 permissions:
   contents: write
-  issues: write
 
 concurrency:
   group: weekly-digest
@@ -41,7 +41,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ISSUE_TOKEN: ${{ secrets.ISSUE_TOKEN }}
-          GITHUB_TOKEN: ${{ github.token }}
+          ISSUE_REPO: ${{ vars.ISSUE_REPO }}
           VLM_MODEL: ${{ vars.VLM_MODEL }}
           VLM_FALLBACK_MODEL: ${{ vars.VLM_FALLBACK_MODEL }}
           CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
