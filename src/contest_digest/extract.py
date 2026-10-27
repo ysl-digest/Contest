@@ -28,7 +28,7 @@ JSON_SCHEMA = {
         "additionalProperties": False,
         "required": [
             "title", "host", "category", "topic", "apply_start", "apply_end", "other_dates",
-            "prize_total", "prize_details", "eligibility", "team_size", "submission",
+            "prize_total", "prize_details", "eligibility", "team_size", "submission", "is_competition",
         ],
         "properties": {
             "title": {"type": "string"},
@@ -51,6 +51,7 @@ JSON_SCHEMA = {
             "eligibility": _STR,
             "team_size": _STR,
             "submission": _STR,
+            "is_competition": {"type": "boolean"},
         },
     },
 }

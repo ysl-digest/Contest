@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from datetime import date
 
 from .classify import Classifier, Verdict, classify_by_keyword
-from .config import NON_IT_CATEGORIES, Settings
+from .config import NON_IT_CATEGORIES, NOT_COMPETITION_KEYWORDS, Settings
 from .extract import Extractor, metadata_only
 from .filters import select_new
 from .http import HttpClient
@@ -53,6 +53,7 @@ class ClassifyResult:
 class RunResult:
     track: str = "it"
     contests: list[Contest] = field(default_factory=list)
+    excluded: list[Listing] = field(default_factory=list)  # 공모전 기준 미달. 본문 맨 아래 접어서 보여준다
     marks: list[Mark] = field(default_factory=list)
     title: str = ""
     body: str = ""
@@ -115,6 +116,9 @@ def process(settings: Settings, http: HttpClient, state: State, today: date, tra
     for it in _by_deadline(state.pending(is_it)):
         if it.apply_end and it.apply_end < today:
             result.marks.append(Mark(it, is_it, it.apply_end))  # 대기 중 마감
+        elif any(w in it.title for w in NOT_COMPETITION_KEYWORDS):
+            result.excluded.append(it)  # 서포터즈 등 활동형 모집
+            result.marks.append(Mark(it, is_it, it.apply_end))
         else:
             queue.append(it)
     todo, overflow = queue[: settings.max_items], queue[settings.max_items:]
@@ -143,11 +147,17 @@ def process(settings: Settings, http: HttpClient, state: State, today: date, tra
             # 상세를 보고 나서야 비IT로 드러난 경우 Non-IT 트랙으로 넘긴다 (반대 방향은 하지 않아 왕복을 막는다)
             result.marks.append(Mark(listing, False, end, PENDING))
             continue
+        if not contest.is_competition:
+            # 상세를 보고 단발성 대회·보상 기준에 맞지 않는 모집으로 드러난 경우
+            log.info("%s 공모전 아님으로 제외: %s", listing.key, listing.title[:40])
+            result.excluded.append(listing)
+            result.marks.append(Mark(listing, is_it, end))
+            continue
         result.contests.append(contest)
         result.marks.append(Mark(listing, is_it, end, "sent"))
 
     result.title = title(result.contests, today, track)
-    result.body = render(result.contests, today, settings.urgent_days, track)
+    result.body = render(result.contests, today, settings.urgent_days, track, result.excluded)
     return result
 
 

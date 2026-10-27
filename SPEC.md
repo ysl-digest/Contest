@@ -87,6 +87,7 @@ needs_review: bool         review_reasons: [str]
 | 3차 | 2차에서도 답이 없으면 키워드 규칙 |
 | 기준 | AI·데이터·SW개발·해커톤·보안·디지털 서비스 기획은 IT. AI 도구로 만드는 영상·이미지 창작 공모는 비IT |
 | 기록 | 분류 결과는 `state.json`의 `it`에 남겨 재분류하지 않음. IT 트랙에서 VLM이 비IT 분야 category를 고르면 Non-IT 트랙으로 넘김(반대 방향은 없음) |
+| 공모전 범위 (IT·Non-IT 공통) | 단발성 이벤트(지속 활동 불필요)이면서 수상·상금·수고비 등 보상이 명확한 경진대회·공모전만 본문에 올림. 서포터즈·기자단 등은 제목 키워드로 추출 전에, 나머지는 VLM `is_competition=false`로 걸러 본문 맨 아래 접힌 토글(`<details>`)에 링크만 남김 (2026-10-27) |
 | 실행 | classify → publish-it → publish-non-it 세 job을 순서대로. 트랙별 VLM 상한 50건이라 job별 timeout을 둠 |
 | 중복 | 정규화 제목(괄호 부연·기호 제거)이 같으면 소스가 달라도 1건만 발송 |
 | JSON 출력 | 모델이 structured outputs를 지원하면 json_schema, 아니면 json_object + 프롬프트 스키마 (`qwen/qwen3.7-flash`가 여기에 해당 [사실: /models 조회]) |

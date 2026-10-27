@@ -59,6 +59,8 @@ class Extraction(BaseModel):
     eligibility: str | None = None
     team_size: str | None = None
     submission: str | None = None
+    # 단발성 경진대회·공모전이고 수상·상금 등 보상이 있는가. 서포터즈·기자단·참여자 모집 등은 false
+    is_competition: bool = True
 
 
 class Contest(Extraction):

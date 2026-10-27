@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-from .models import Contest, OtherDate
+from .models import Contest, Listing, OtherDate
 
 SOURCE_NAMES = {"wevity": "위비티", "linkareer": "링커리어"}
 
@@ -18,7 +18,8 @@ TRACK_LABELS = {
 def _esc(text: str | None) -> str:
     if not text:
         return "-"
-    return " ".join(text.split()).replace("|", "\\|")
+    # "6~12세 … 13~17세"처럼 ~가 두 번 나오면 GitHub가 그 사이를 취소선으로 렌더링하므로 이스케이프한다
+    return " ".join(text.split()).replace("|", "\\|").replace("~", "\\~")
 
 
 def _dday(end: str | None, today: date) -> str:
@@ -75,7 +76,18 @@ def title(contests: list[Contest], today: date, track: str = "it") -> str:
     return f"주간 공모전 - {month}월 {week}째주 {TRACK_LABELS[track][0]}"
 
 
-def render(contests: list[Contest], today: date, urgent_days: int = 7, track: str = "it") -> str:
+def _excluded(items: list[Listing]) -> list[str]:
+    """공모전 기준(단발성·보상)에 맞지 않는 모집을 접힌 토글로."""
+    rows = []
+    for it in sorted(items, key=lambda x: (x.apply_end or date.max, x.key)):
+        end = f" · 마감 {it.apply_end}" if it.apply_end else ""
+        rows.append(f"- [{_esc(it.title)}]({it.url}){end}")
+    return ["<details>", f"<summary>공모전이 아닌 모집 {len(items)}건 (서포터즈·참여자 모집 등)</summary>", "", *rows,
+            "", "</details>", ""]
+
+
+def render(contests: list[Contest], today: date, urgent_days: int = 7, track: str = "it",
+           excluded: list[Listing] = ()) -> str:
     def end(c: Contest) -> date:
         return date.fromisoformat(c.apply_end) if c.apply_end else date.max
 
@@ -95,6 +107,8 @@ def render(contests: list[Contest], today: date, urgent_days: int = 7, track: st
     if rest:
         out += ["## 📋 신규 공모전 (마감순)", ""]
         out += [_block(c, today) + "\n" for c in rest]
+    if excluded:
+        out += _excluded(list(excluded))
     out += [
         "---",
         "<sub>출처: 위비티, 링커리어. 원문 본문과 포스터는 재게시하지 않고 링크만 겁니다.</sub>",

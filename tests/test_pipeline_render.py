@@ -153,7 +153,7 @@ def test_render_other_date_period(today):
 
     c = C("wevity:1", "2026-11-20", other_dates=[OtherDate(label="본선", date="2026-11-05", end_date="2026-11-06"),
                                                  OtherDate(label="발표", date="2026-12-01")])
-    assert "본선 2026-11-05 ~ 2026-11-06, 발표 2026-12-01" in render([c], today)
+    assert "본선 2026-11-05 \\~ 2026-11-06, 발표 2026-12-01" in render([c], today)
 
 
 def test_title_week_of_month():
@@ -167,3 +167,40 @@ def test_title_week_of_month():
     assert week_of_month(date(2026, 10, 26)) == (10, 5)
     assert week_of_month(date(2026, 11, 30)) == (12, 1)  # 그 주 목요일이 12월
     assert week_of_month(date(2026, 6, 1)) == (6, 1)
+
+
+def test_render_escapes_tilde_to_prevent_strikethrough(today):
+    body = render([C("wevity:1", "2026-11-20", eligibility="아동(6~12세), 청소년(13~17세)")], today)
+    assert "6\\~12세" in body and "13\\~17세" in body
+    assert "6~12" not in body
+
+
+def test_non_it_track_drops_non_competitions(http, today):
+    from contest_digest.extract import metadata_only
+    from contest_digest.models import Listing
+
+    class FakeExtractor:
+        def extract(self, detail, today):
+            c = metadata_only(detail)
+            c.is_competition = detail.listing.key != "wevity:900003"
+            return c
+
+    state = State()
+    sup = Listing("wevity", "9", "2026 청년 서포터즈 3기 모집", "u/9", apply_end=today)
+    for it in [sup, Listing("wevity", "900003", "우리 동네 슬로건 공모전", "https://www.wevity.com/?c=find&s=1&gbn=view&ix=900003"),
+               Listing("wevity", "900002", "스마트시티 아이디어", "https://www.wevity.com/?c=find&s=1&gbn=view&ix=900002")]:
+        state.mark(it.key, today, it.apply_end, None, title=it.title, is_it=False, status="pending", listing=it)
+    r = process(Settings(), http, state, today, "non-it", use_llm=False, extractor=FakeExtractor())
+    assert [c.key for c in r.contests] == ["wevity:900002"]
+    assert {it.key for it in r.excluded} == {"wevity:9", "wevity:900003"}
+    toggle = r.body[r.body.index("<details>"):]
+    assert "공모전이 아닌 모집 2건" in toggle and "서포터즈 3기" in toggle and "슬로건" in toggle
+    assert r.body.index("스마트시티") < r.body.index("<details>") < r.body.index("---")
+
+    # IT 트랙에도 같은 기준 적용
+    it_sup = Listing("wevity", "8", "AI 서포터즈 모집", "u/8", apply_end=today)
+    state.mark(it_sup.key, today, today, None, title=it_sup.title, is_it=True, status="pending", listing=it_sup)
+    r_it = process(Settings(), http, state, today, "it", use_llm=False)
+    assert r_it.contests == [] and [it.key for it in r_it.excluded] == ["wevity:8"]
+    assert {m.listing.key: m.status for m in r.marks} == {"wevity:9": "skipped", "wevity:900003": "skipped",
+                                                          "wevity:900002": "sent"}
