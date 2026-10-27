@@ -52,6 +52,7 @@ def finalize(ext: Extraction | None, detail: Detail, reasons: list[str]) -> Cont
         reasons.append("마감일 확인 불가")
     if detail.apply_start and not data.get("apply_start"):
         data["apply_start"] = detail.apply_start.isoformat()
+    data["title"] = listing.title  # 원문 제목 우선 (VLM이 줄이거나 자르는 경우 방지)
     data["host"] = data.get("host") or listing.host
     return Contest(
         **data,

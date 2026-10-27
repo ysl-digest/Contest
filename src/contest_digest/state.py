@@ -22,10 +22,18 @@ class State:
     def seen(self) -> set[str]:
         return set(self.items)
 
-    def mark(self, key: str, today: date, apply_end: date | None, issue_number: int | None) -> None:
+    def seen_titles(self) -> set[str]:
+        from .filters import title_key
+
+        return {title_key(v["title"]) for v in self.items.values() if v.get("title")}
+
+    def mark(self, key: str, today: date, apply_end: date | None, issue_number: int | None,
+             title: str | None = None, is_it: bool | None = None) -> None:
         self.items[key] = {
+            "title": title,
             "first_seen": today.isoformat(),
             "apply_end": apply_end.isoformat() if apply_end else None,
+            "it": is_it,
             "issue": issue_number,
         }
 

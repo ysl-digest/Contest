@@ -11,14 +11,12 @@ from ..models import Detail, Listing
 from .base import Source, html_to_text
 
 BASE = "https://linkareer.com"
-# 링커리어 공모전에는 IT 전용 카테고리가 없음. 과학/공학 + 전체 목록을 보고 키워드로 거른다.
-LIST_FILTERS = ("filterBy_categoryIDs=35", "")
 NEXT_DATA = re.compile(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.S)
 
 
-def list_url(filter_qs: str, page: int) -> str:
-    qs = "&".join(p for p in (filter_qs, f"page={page}") if p)
-    return f"{BASE}/list/contest?{qs}"
+def list_url(page: int) -> str:
+    """전체 분야 목록. IT 여부는 classify 단계에서 판단한다."""
+    return f"{BASE}/list/contest?page={page}"
 
 
 def apollo_state(html: str) -> dict:
@@ -106,13 +104,12 @@ class LinkareerSource(Source):
 
     def collect(self) -> list[Listing]:
         seen: dict[str, Listing] = {}
-        for qs in LIST_FILTERS:
-            for page in range(1, self.max_pages + 1):
-                items = parse_list(self.client.get_text(list_url(qs, page)))
-                if not items:
-                    break
-                for it in items:
-                    seen.setdefault(it.id, it)
+        for page in range(1, self.max_pages + 1):
+            items = parse_list(self.client.get_text(list_url(page)))
+            if not items or all(it.id in seen for it in items):
+                break
+            for it in items:
+                seen.setdefault(it.id, it)
         return list(seen.values())
 
     def fetch(self, listing: Listing) -> Detail:

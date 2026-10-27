@@ -20,6 +20,7 @@ def _env(name: str, default: str) -> str:
     return value or default
 
 
+# API 키가 없거나 분류 모델이 모두 실패했을 때 쓰는 대체 규칙.
 # IT·데이터·AI 판단용 제목 키워드. 영문은 단어 경계로, 한글은 부분 문자열로 매칭한다
 IT_KEYWORDS = [
     "ai", "data", "hackathon", "sw", "software", "app", "web", "it", "ict", "iot", "llm",
@@ -36,11 +37,14 @@ IT_ONLY_CATEGORIES = {"웹/모바일/IT", "웹/모바일/플래시", "게임/소
 class Settings:
     openrouter_api_key: str = field(default_factory=lambda: os.environ.get("OPENROUTER_API_KEY", ""))
     openrouter_base_url: str = field(default_factory=lambda: _env("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"))
-    vlm_model: str = field(default_factory=lambda: _env("VLM_MODEL", "google/gemini-2.5-flash-lite"))
-    vlm_fallback_model: str = field(default_factory=lambda: _env("VLM_FALLBACK_MODEL", "anthropic/claude-haiku-5.5"))
+    vlm_model: str = field(default_factory=lambda: _env("VLM_MODEL", "qwen/qwen3.7-flash"))
+    vlm_fallback_model: str = field(default_factory=lambda: _env("VLM_FALLBACK_MODEL", "deepseek/deepseek-v4.1-flash"))
+    classifier_model: str = field(default_factory=lambda: _env("CLASSIFIER_MODEL", "typesafe/jev-router"))
+    classifier_fallback_model: str = field(default_factory=lambda: _env("CLASSIFIER_FALLBACK_MODEL", "qwen/qwen3.5-9b"))
+    classify_batch: int = field(default_factory=lambda: int(_env("CLASSIFY_BATCH", "40")))
     max_items: int = field(default_factory=lambda: int(_env("MAX_ITEMS", "40")))
     max_posters: int = field(default_factory=lambda: int(_env("MAX_POSTERS", "2")))
-    max_pages: int = field(default_factory=lambda: int(_env("MAX_PAGES", "3")))
+    max_pages: int = field(default_factory=lambda: int(_env("MAX_PAGES", "5")))
     request_delay: float = field(default_factory=lambda: float(_env("REQUEST_DELAY", "2.0")))
     urgent_days: int = 7
     state_retention_days: int = 90

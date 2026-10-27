@@ -2,7 +2,7 @@
 
 IT·데이터·AI 공모전을 매주 모아 **GitHub Issue 다이제스트**로 발행합니다. 저장소를 Watch하면 GitHub 알림 메일로 받아볼 수 있습니다. 별도 메일 서버나 구독자 DB는 없습니다.
 
-- 소스: [위비티](https://www.wevity.com), [링커리어](https://linkareer.com)
+- 소스: [위비티](https://www.wevity.com), [링커리어](https://linkareer.com) (전체 분야를 수집하고, 알림은 IT 주제만)
 - 발송: 매주 월요일 오전 9시경 (KST)
 - 내용: 공모 주제, 접수 기간, 상금, 참가 자격, 팀 구성, 제출물을 원문과 포스터에서 AI(VLM)로 요약하고 원문 링크를 함께 겁니다.
 
@@ -22,7 +22,8 @@ IT·데이터·AI 공모전을 매주 모아 **GitHub Issue 다이제스트**로
 
 ### 동작 방식
 ```
-collect(소스별 목록) → dedupe(IT 필터·마감·state.json 비교) → fetch(상세·포스터)
+collect(소스별 전체 목록) → dedupe(마감·state.json·소스 간 같은 제목)
+  → classify(Jev Router/SLM으로 IT 주제 판정, 비IT는 상태에만 기록) → fetch(상세·포스터)
   → extract(OpenRouter VLM, JSON 스키마) → validate(형식·범위, 재시도/대체 모델)
   → render(마크다운) → publish(Issue 생성) → data/state.json 커밋
 ```
@@ -35,8 +36,10 @@ Settings → Secrets and variables → Actions
 |---|---|---|---|
 | Secret | `OPENROUTER_API_KEY` | ✅ | OpenRouter API 키. 없으면 VLM 없이 메타데이터만 게시 |
 | Secret | `ISSUE_TOKEN` | 선택 | Issue 작성용 PAT(fine-grained, 이 저장소의 Issues: Read and write). 없으면 `GITHUB_TOKEN` 사용 |
-| Variable | `VLM_MODEL` | 선택 | 주 모델 ID (기본 `google/gemini-2.5-flash-lite`) |
-| Variable | `VLM_FALLBACK_MODEL` | 선택 | 대체 모델 ID (기본 `anthropic/claude-haiku-5.5`) |
+| Variable | `VLM_MODEL` | 선택 | 추출 주 모델 (기본 `qwen/qwen3.7-flash`) |
+| Variable | `VLM_FALLBACK_MODEL` | 선택 | 추출 대체 모델 (기본 `deepseek/deepseek-v4.1-flash`) |
+| Variable | `CLASSIFIER_MODEL` | 선택 | IT 분류 모델 (기본 `typesafe/jev-router`) |
+| Variable | `CLASSIFIER_FALLBACK_MODEL` | 선택 | IT 분류 대체 SLM (기본 `qwen/qwen3.5-9b`) |
 
 추가로 Settings → Actions → General → Workflow permissions가 **Read and write**여야 상태 파일을 커밋할 수 있습니다.
 
@@ -53,7 +56,8 @@ python -m contest_digest run --dry-run --offline       # fixture로 실행
 python -m contest_digest run --dry-run --no-llm        # 실제 소스, VLM 없이
 OPENROUTER_API_KEY=... python -m contest_digest run --dry-run --max-items 3
 python -m contest_digest collect --sources wevity      # 목록 수집 결과만
-python -m contest_digest check-model                   # 모델의 이미지·structured outputs 지원 확인
+python -m contest_digest -v run --dry-run --max-items 3  # 분류 판정 근거까지 로그로 확인
+python -m contest_digest check-model                   # 모델 존재·이미지 입력·JSON 출력 방식 확인
 ```
 
 ### 수집 원칙

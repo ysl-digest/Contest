@@ -13,6 +13,7 @@ from pydantic import ValidationError as PydanticError
 
 from .config import Settings
 from .http import HttpClient
+from .llm import ModelCaps, chat_json
 from .models import Contest, Detail, Extraction
 from .validate import ValidationError, check, finalize
 
@@ -86,7 +87,7 @@ def build_messages(prompt: str, detail: Detail, images: list[str], char_limit: i
 
 
 class Extractor:
-    def __init__(self, settings: Settings, http: HttpClient, client=None):
+    def __init__(self, settings: Settings, http: HttpClient, client=None, caps: ModelCaps | None = None):
         self.settings = settings
         self.http = http
         self.prompt = settings.prompt_path.read_text(encoding="utf-8")
@@ -95,19 +96,12 @@ class Extractor:
 
             client = OpenAI(api_key=settings.openrouter_api_key, base_url=settings.openrouter_base_url)
         self.client = client
+        self.caps = caps or ModelCaps(settings.openrouter_base_url)
         self.calls = 0
 
     def _call(self, model: str, messages) -> Extraction:
         self.calls += 1
-        resp = self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=0,
-            response_format={"type": "json_schema", "json_schema": JSON_SCHEMA},
-            extra_body={"provider": {"require_parameters": True}},
-        )
-        raw = resp.choices[0].message.content or ""
-        return Extraction.model_validate(json.loads(raw))
+        return Extraction.model_validate(chat_json(self.client, model, messages, JSON_SCHEMA, self.caps))
 
     def extract(self, detail: Detail, today: date) -> Contest:
         images, reasons = load_posters(detail, self.http, self.settings)

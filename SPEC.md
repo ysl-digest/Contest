@@ -12,7 +12,7 @@ IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub I
 | 항목 | 결정 |
 |---|---|
 | 소스 | 위비티(wevity.com), 링커리어(linkareer.com) |
-| 분야 | IT·데이터·AI만. 소스의 카테고리 필터를 우선 쓰고, 보조로 설정 파일의 키워드를 매칭 |
+| 분야 | **수집은 전체 분야**. VLM 추출과 알림만 IT·데이터·AI로 제한 (classify 단계, 2026-10-27 변경) |
 | 대상(참가 자격) 필터 | 하지 않음. `eligibility` 필드로 표시만 함 |
 
 ### 발송
@@ -68,6 +68,17 @@ needs_review: bool         review_reasons: [str]
 
 ---
 
+### classify 단계 (2026-10-27 추가)
+| 항목 | 결정 |
+|---|---|
+| 위치 | dedupe 뒤, fetch 앞. 상세 페이지·포스터를 받기 전에 걸러 요청 수와 VLM 비용을 줄임 |
+| 입력 | 목록 메타데이터(key·제목·주최·분야 태그)만. 40건씩 배치로 묶어 1회 호출 |
+| 모델 | 주 `typesafe/jev-router`(TypeSafe Jev 기반 라우터), 대체 SLM `qwen/qwen3.5-9b`. 둘 다 실패하거나 일부 key가 빠지면 키워드 규칙으로 판정 |
+| 기준 | AI·데이터·SW개발·해커톤·보안 등은 IT. AI 도구로 만드는 영상·이미지 창작 공모는 비IT |
+| 기록 | 비IT도 `state.json`에 `it:false`로 남겨 재분류하지 않음. VLM이 상세를 보고 `category="비IT"`로 판정한 건도 제외 |
+| 중복 | 정규화 제목(괄호 부연·기호 제거)이 같으면 소스가 달라도 1건만 발송 |
+| JSON 출력 | 모델이 structured outputs를 지원하면 json_schema, 아니면 json_object + 프롬프트 스키마 (`qwen/qwen3.7-flash`가 여기에 해당 [사실: /models 조회]) |
+
 ## 2. 조사 결과 (근거)
 
 ### 소스 robots.txt (2026-10-27 확인)
@@ -89,7 +100,7 @@ needs_review: bool         review_reasons: [str]
 - Structured outputs 지원은 모델이 아니라 **프로바이더 엔드포인트별**로 다름.
 - `require_parameters: true`를 주면 지원하는 엔드포인트로만 라우팅됨.
 - 모델별 지원 여부는 `/api/v1/models`의 `supported_parameters`(`structured_outputs`, `response_format`)와 `architecture.input_modalities`(`image`)로 확인함 → `contest_digest check-model` 명령으로 실행 전에 검증.
-- 기본 모델 **[사실: 2026-10-27 `/models` 조회]**: 주 `google/gemini-2.5-flash-lite`, 대체 `anthropic/claude-haiku-5.5`. 둘 다 image 입력과 structured_outputs를 지원하는 것으로 확인함. 실제 추출 품질은 **(미확인)** 이며 정답 JSON 평가로 확인 예정.
+- 기본 모델 **[사실: 2026-10-27 `/models` 조회]**: 추출 주 `qwen/qwen3.7-flash`(structured outputs 미지원 → json_object 대체), 대체 `deepseek/deepseek-v4.1-flash`. 둘 다 image 입력 지원. 실제 추출 품질은 **(미확인)** 이며 정답 JSON 평가로 확인 예정.
 
 ### 레퍼런스 사용
 구조와 아이디어만 참고했고 코드는 복사하지 않았으므로 라이선스상 문제는 없음.
@@ -97,7 +108,7 @@ needs_review: bool         review_reasons: [str]
 ---
 
 ### 소스 카테고리 [사실]
-- 위비티: `cidx` 20=웹/모바일/IT, 21=게임/소프트웨어, 22=과학/공학 → 세 카테고리를 수집함. 위비티는 분야 태그를 넓게 다는 편(슬로건 공모에도 IT 태그가 붙음)이라 제목 키워드 필터를 함께 씀.
+- 위비티: `cidx` 20=웹/모바일/IT, 21=게임/소프트웨어, 22=과학/공학 (참고용. 현재는 전체 목록을 수집함). 위비티는 분야 태그를 넓게 다는 편(슬로건 공모에도 IT 태그가 붙음)이라 제목 키워드 필터를 함께 씀.
 - 링커리어 공모전 카테고리: 28 기획/아이디어 · 29 광고/마케팅 · 30 사진/영상/UCC · 31 디자인 · 32 네이밍/슬로건 · 33 캐릭터/만화/게임 · 34 건축 · 35 과학/공학 · 36 예체능/패션 · 37 전시/페스티벌 · 38 문학/시나리오 · 39 해외 · 40 학술 · 41 창업 · 42 기타. **IT 전용 카테고리가 없음** → 35 필터 목록과 전체 목록을 함께 수집하고 제목 키워드로 거름.
 - 키워드 필터를 통과한 비IT 건은 VLM이 `category="비IT"`로 판정하면 발송에서 제외함.
 
@@ -105,7 +116,7 @@ needs_review: bool         review_reasons: [str]
 1. 위비티·링커리어 이용약관상 수집 허용 범위
 2. GITHUB_TOKEN으로 만든 Issue의 Watch 메일 발송 여부 (첫 실행 때 테스트하고, 안 되면 PAT 또는 GitHub App 사용)
 3. bot 커밋이 60일 비활성 판정에서 활동으로 인정되는지
-4. 기본 VLM 모델명과 가격
+4. `typesafe/jev-router`의 비용. /models의 가격이 `-1`(요청마다 라우팅 대상에 따라 달라짐)이라 실행당 비용 상한을 사전에 계산할 수 없음 (미확인). OpenRouter 대시보드에서 첫 몇 주 비용을 확인 필요
 5. 링커리어 `__NEXT_DATA__` 스키마의 안정성 (깨지면 소스 실패로 보고)
 6. Issue 생성 시 없는 라벨(`digest`)이 자동으로 만들어지는지 (미확인. 안 되면 라벨을 수동으로 생성)
 

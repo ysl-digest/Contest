@@ -1,4 +1,4 @@
-"""dedupe 단계: 분야 필터, 마감 필터, 이미 처리한 건 제외."""
+"""dedupe 단계(마감·기처리 제외)와 키워드 기반 IT 판정(classify 대체 규칙)."""
 
 from __future__ import annotations
 
@@ -37,11 +37,25 @@ def is_open(listing: Listing, today: date) -> bool:
     return listing.apply_end is None or listing.apply_end >= today
 
 
-def select_new(listings: list[Listing], seen: set[str], today: date) -> list[Listing]:
+_BRACKETS = re.compile(r"[\[\(【<（][^\]\)】>）]*[\]\)】>）]")
+_NON_WORD = re.compile(r"[^0-9a-z가-힣]")
+
+
+def title_key(title: str) -> str:
+    """소스 간 같은 공모전을 찾기 위한 정규화 제목. 괄호 안 부연과 기호·공백을 뺀다."""
+    return _NON_WORD.sub("", _BRACKETS.sub("", title.lower()))
+
+
+def select_new(listings: list[Listing], seen: set[str], today: date,
+               seen_titles: set[str] = frozenset()) -> list[Listing]:
+    """미처리·접수 중인 건을 마감순으로. 제목이 같은 건(다른 소스 포함)은 하나만 남긴다."""
     out: dict[str, Listing] = {}
-    for it in listings:
-        if it.key in seen or it.key in out:
+    titles = set(seen_titles)
+    for it in sorted(listings, key=lambda x: x.key):
+        tkey = title_key(it.title)
+        if it.key in seen or it.key in out or (tkey and tkey in titles):
             continue
-        if is_open(it, today) and is_it_related(it):
+        if is_open(it, today):
             out[it.key] = it
+            titles.add(tkey)
     return sorted(out.values(), key=lambda x: (x.apply_end or date.max, x.key))

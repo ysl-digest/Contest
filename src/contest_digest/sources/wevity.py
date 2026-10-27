@@ -13,13 +13,12 @@ from ..models import Detail, Listing
 from .base import Source, html_to_text
 
 BASE = "https://www.wevity.com/"
-# 웹/모바일/IT, 게임/소프트웨어, 과학/공학
-CATEGORY_IDS = (20, 21, 22)
 DATE_RANGE = re.compile(r"(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})")
 
 
-def list_url(cidx: int, page: int) -> str:
-    return f"{BASE}?c=find&s=1&gub=1&cidx={cidx}&gp={page}"
+def list_url(page: int) -> str:
+    """전체 분야 목록. IT 여부는 classify 단계에서 판단한다."""
+    return f"{BASE}?c=find&s=1&gub=1&gp={page}"
 
 
 def parse_dday(text: str, today: date) -> date | None:
@@ -89,13 +88,12 @@ class WevitySource(Source):
     def collect(self) -> list[Listing]:
         today = today_kst().date()
         seen: dict[str, Listing] = {}
-        for cidx in CATEGORY_IDS:
-            for page in range(1, self.max_pages + 1):
-                items = parse_list(self.client.get_text(list_url(cidx, page)), today)
-                if not items:
-                    break
-                for it in items:
-                    seen.setdefault(it.id, it)
+        for page in range(1, self.max_pages + 1):
+            items = parse_list(self.client.get_text(list_url(page)), today)
+            if not items:
+                break
+            for it in items:
+                seen.setdefault(it.id, it)
         return list(seen.values())
 
     def fetch(self, listing: Listing) -> Detail:

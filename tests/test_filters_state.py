@@ -46,3 +46,16 @@ def test_state_roundtrip_and_prune(tmp_path, today):
 
 def test_state_missing_file(tmp_path):
     assert State.load(tmp_path / "nope.json").seen() == set()
+
+
+def test_cross_source_title_dedupe(today):
+    from contest_digest.filters import title_key
+
+    a = L("1", "2026 DATA·AI 분석 경진대회", end=today, source="wevity")
+    b = L("2", "[KISTI] 2026 DATA·AI 분석 경진대회", end=today, source="linkareer")
+    c = L("3", "2026 데이터 분석 경진대회", end=today)
+    assert title_key(a.title) == title_key(b.title)
+    got = select_new([a, b, c], set(), today)
+    assert len(got) == 2 and {g.title for g in got} >= {"2026 데이터 분석 경진대회"}
+    # 지난 실행에서 보낸 제목도 제외
+    assert select_new([b], set(), today, seen_titles={title_key(a.title)}) == []

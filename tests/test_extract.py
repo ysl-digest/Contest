@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 from contest_digest.config import Settings
 from contest_digest.extract import Extractor
+from contest_digest.llm import ModelCaps
 from contest_digest.models import Detail, Listing
 
 
@@ -44,6 +45,9 @@ def detail(today, posters=("https://www.wevity.com/upload/a.jpg",)):
     return Detail(listing, "본문", list(posters), today - timedelta(days=10), today + timedelta(days=5), listing.url)
 
 
+CAPS = ModelCaps("unused", {"main/model": {"structured_outputs"}, "fallback/model": {"structured_outputs"}})
+
+
 def settings():
     s = Settings()
     s.vlm_model, s.vlm_fallback_model = "main/model", "fallback/model"
@@ -52,7 +56,7 @@ def settings():
 
 def test_success_sends_schema_and_image(http, today):
     client, comp = fake_client([good(today)])
-    c = Extractor(settings(), http, client).extract(detail(today), today)
+    c = Extractor(settings(), http, client, CAPS).extract(detail(today), today)
     assert not c.needs_review and c.category == "AI/데이터"
     req = comp.requests[0]
     assert req["model"] == "main/model"
@@ -66,7 +70,7 @@ def test_success_sends_schema_and_image(http, today):
 def test_retry_then_fallback(http, today):
     bad_date = good(today, apply_end="2026/13/40")
     client, comp = fake_client([bad_date, "not json", good(today)])
-    c = Extractor(settings(), http, client).extract(detail(today), today)
+    c = Extractor(settings(), http, client, CAPS).extract(detail(today), today)
     assert [r["model"] for r in comp.requests] == ["main/model", "main/model", "fallback/model"]
     assert "검증에 실패" in comp.requests[1]["messages"][0]["content"][1]["text"]
     assert not c.needs_review
@@ -74,20 +78,30 @@ def test_retry_then_fallback(http, today):
 
 def test_all_fail_marks_review(http, today):
     client, _ = fake_client([RuntimeError("boom")] * 3)
-    c = Extractor(settings(), http, client).extract(detail(today), today)
+    c = Extractor(settings(), http, client, CAPS).extract(detail(today), today)
     assert c.needs_review and any("VLM 추출 실패" in r for r in c.review_reasons)
     assert c.title == "제1회 가상 AI 데이터 분석 경진대회" and c.apply_end == (today + timedelta(days=5)).isoformat()
 
 
 def test_deadline_mismatch_prefers_metadata(http, today):
     client, _ = fake_client([good(today, apply_end=(today + timedelta(days=6)).isoformat())])
-    c = Extractor(settings(), http, client).extract(detail(today), today)
+    c = Extractor(settings(), http, client, CAPS).extract(detail(today), today)
     assert c.apply_end == (today + timedelta(days=5)).isoformat()
     assert c.needs_review and "마감일 불일치" in c.review_reasons[0]
 
 
 def test_no_poster_is_not_review(http, today):
     client, comp = fake_client([good(today)])
-    c = Extractor(settings(), http, client).extract(detail(today, posters=()), today)
+    c = Extractor(settings(), http, client, CAPS).extract(detail(today, posters=()), today)
     assert not c.needs_review
     assert all(p["type"] == "text" for p in comp.requests[0]["messages"][0]["content"])
+
+
+def test_model_without_structured_outputs_uses_json_object(http, today):
+    client, comp = fake_client(["```json\n" + good(today) + "\n```"])
+    caps = ModelCaps("unused", {"main/model": {"response_format"}})
+    c = Extractor(settings(), http, client, caps).extract(detail(today), today)
+    req = comp.requests[0]
+    assert req["response_format"] == {"type": "json_object"} and "extra_body" not in req
+    assert req["messages"][0]["role"] == "system" and "apply_end" in req["messages"][0]["content"]
+    assert not c.needs_review

@@ -44,6 +44,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           VLM_MODEL: ${{ vars.VLM_MODEL }}
           VLM_FALLBACK_MODEL: ${{ vars.VLM_FALLBACK_MODEL }}
+          CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
+          CLASSIFIER_FALLBACK_MODEL: ${{ vars.CLASSIFIER_FALLBACK_MODEL }}
           MAX_ITEMS: ${{ inputs.max_items }}
         run: |
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then

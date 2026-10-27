@@ -6,12 +6,11 @@ import argparse
 import json
 import logging
 import sys
-from datetime import date
 
 from .config import Settings, today_kst
 from .http import HttpClient
 from .offline import FixtureHttp
-from .pipeline import collect, run
+from .pipeline import collect, run, save_marks
 from .publish import create_issue
 from .sources import SOURCES
 from .state import State
@@ -46,8 +45,11 @@ def cmd_run(args, settings: Settings) -> int:
     if args.dry_run:
         print(f"# {result.title}\n")
         print(result.body)
-        logging.info("dry-run: Issue 생성·상태 저장 생략 (발송 대상 %d건, 제외 %d건)",
-                     len(result.contests), len(result.skipped))
+        logging.info("dry-run: Issue 생성·상태 저장 생략 (수집 %d건, 발송 대상 %d건, 비IT %d건)",
+                     result.collected, len(result.contests), result.non_it)
+        if args.verbose:
+            for key, v in result.verdicts.items():
+                logging.debug("분류 %s %s (%s, %s)", "IT " if v.is_it else "비IT", key, v.reason, v.by)
         return 0
 
     if len(result.failures) == len(args.sources):
@@ -60,34 +62,35 @@ def cmd_run(args, settings: Settings) -> int:
         logging.info("Issue #%d 생성", issue)
     else:
         logging.info("신규 0건: Issue 생성 생략")
-    for c in result.contests:
-        state.mark(c.key, today, date.fromisoformat(c.apply_end) if c.apply_end else None, issue)
-    for key in result.skipped:
-        state.mark(key, today, None, None)
+    save_marks(state, result, today, issue)
     state.prune(today, settings.state_retention_days)
     state.save(settings.state_path, today)
     return 0
 
 
 def cmd_check_model(args, settings: Settings) -> int:
-    """OpenRouter 모델이 이미지 입력과 structured outputs를 지원하는지 확인한다."""
+    """설정된 모델의 존재 여부, 이미지 입력, JSON 출력 방식을 확인한다."""
     import requests
 
     data = requests.get(f"{settings.openrouter_base_url}/models", timeout=30).json()["data"]
     by_id = {m["id"]: m for m in data}
     ok = True
-    for model in (settings.vlm_model, settings.vlm_fallback_model):
+    roles = [("VLM", settings.vlm_model, True), ("VLM 대체", settings.vlm_fallback_model, True),
+             ("분류", settings.classifier_model, False), ("분류 대체", settings.classifier_fallback_model, False)]
+    for role, model, need_image in roles:
         m = by_id.get(model)
         if not m:
-            print(f"✗ {model}: 모델 없음")
+            print(f"✗ [{role}] {model}: 모델 없음")
             ok = False
             continue
         image = "image" in m.get("architecture", {}).get("input_modalities", [])
         so = "structured_outputs" in m.get("supported_parameters", [])
         price = m.get("pricing", {})
-        print(f"{'✓' if image and so else '✗'} {model}: image={image} structured_outputs={so} "
+        usable = image or not need_image
+        mode = "json_schema" if so else "json_object 대체"
+        print(f"{'✓' if usable else '✗'} [{role}] {model}: image={image} 출력={mode} "
               f"prompt=${price.get('prompt')}/tok completion=${price.get('completion')}/tok")
-        ok &= image and so
+        ok &= usable
     return 0 if ok else 1
 
 

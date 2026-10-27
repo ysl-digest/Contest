@@ -50,3 +50,27 @@ def test_max_items_defers(http, today):
     s.max_items = 1
     result = run(s, http, State(), today, ["wevity", "linkareer"], use_llm=False)
     assert len(result.contests) == 1 and result.deferred == 2
+
+
+def test_pipeline_with_classifier_marks_non_it(http, today, tmp_path):
+    from contest_digest.classify import Verdict
+    from contest_digest.pipeline import save_marks
+
+    class FakeClassifier:
+        def classify(self, listings):
+            # 키워드 규칙과 달리 900002(스마트시티)를 비IT로, 800002(시 낭송)도 비IT로
+            return {it.key: Verdict(it.key in {"wevity:900001", "linkareer:800001"}, "", "fake") for it in listings}
+
+    s = Settings()
+    result = run(s, http, State(), today, ["wevity", "linkareer"], use_llm=False, classifier=FakeClassifier())
+    assert {c.key for c in result.contests} == {"wevity:900001", "linkareer:800001"}
+    assert result.non_it == 3 and result.collected == 6
+
+    state = State()
+    save_marks(state, result, today, issue=7)
+    assert state.items["wevity:900001"]["issue"] == 7 and state.items["wevity:900001"]["it"] is True
+    assert state.items["wevity:900003"]["it"] is False and state.items["wevity:900003"]["issue"] is None
+    assert state.items["wevity:900003"]["title"] == "우리 동네 슬로건 공모전"
+    # 다음 실행에서는 모두 기처리
+    again = run(s, http, state, today, ["wevity", "linkareer"], use_llm=False, classifier=FakeClassifier())
+    assert again.contests == [] and again.marks == []

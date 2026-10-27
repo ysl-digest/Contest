@@ -43,9 +43,9 @@ class FixtureHttp:
         if "wevity.com" in url:
             if "gbn=view" in url:
                 return self.root / "wevity_detail.html"
-            return self.root / "wevity_list.html" if re.search(r"gp=1\b", url) and "cidx=20" in url else None
+            return self.root / "wevity_list.html" if re.search(r"gp=1\b", url) else None
         if "linkareer.com/list" in url:
-            return self.root / "linkareer_list.html" if "page=1" in url and "filterBy" in url else None
+            return self.root / "linkareer_list.html" if re.search(r"page=1\b", url) else None
         m = re.search(r"linkareer\.com/activity/(\d+)", url)
         if m:
             return self.root / f"linkareer_detail_{m.group(1)}.html"
