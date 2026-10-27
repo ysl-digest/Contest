@@ -68,16 +68,24 @@ needs_review: bool         review_reasons: [str]
 
 ---
 
-### classify 단계 (2026-10-27 추가)
+### classify 단계 (2026-10-27 추가·개정)
 | 항목 | 결정 |
 |---|---|
 | 위치 | dedupe 뒤, fetch 앞. 상세 페이지·포스터를 받기 전에 걸러 요청 수와 VLM 비용을 줄임 |
-| 입력 | 목록 메타데이터(key·제목·주최·분야 태그)만. 40건씩 배치로 묶어 1회 호출 |
-| 모델 | 주 `typesafe/jev-router`(TypeSafe Jev 기반 라우터), 대체 SLM `qwen/qwen3.5-9b`. 둘 다 실패하거나 일부 key가 빠지면 키워드 규칙으로 판정 |
-| 기준 | AI·데이터·SW개발·해커톤·보안 등은 IT. AI 도구로 만드는 영상·이미지 창작 공모는 비IT |
+| 입력 | 목록 메타데이터(제목·주최·분야 태그)만 |
+| 1차 | `typesafe/jev-1.14` (TypeSafe Jev 결정 모델). OpenRouter `/api/alpha/decisions`에 건별 `noul`(yes/no) 질문 → IT일 확률. p≥0.65면 IT, p≤0.35면 비IT |
+| 2차 | 0.35<p<0.65(애매)이거나 Jev 호출이 실패한 건만 `qwen/qwen3.7-flash`에 40건씩 배치로 다시 판정 |
+| 3차 | 2차에서도 답이 없으면 키워드 규칙 |
+| 기준 | AI·데이터·SW개발·해커톤·보안·디지털 서비스 기획은 IT. AI 도구로 만드는 영상·이미지 창작 공모는 비IT |
 | 기록 | 비IT도 `state.json`에 `it:false`로 남겨 재분류하지 않음. VLM이 상세를 보고 `category="비IT"`로 판정한 건도 제외 |
 | 중복 | 정규화 제목(괄호 부연·기호 제거)이 같으면 소스가 달라도 1건만 발송 |
 | JSON 출력 | 모델이 structured outputs를 지원하면 json_schema, 아니면 json_object + 프롬프트 스키마 (`qwen/qwen3.7-flash`가 여기에 해당 [사실: /models 조회]) |
+
+**모델 선택 근거 [사실: 2026-10-27 실측]**
+- `typesafe/jev-router`는 분류기가 아니라 **요청마다 다른 LLM을 골라 주는 라우터**임. 짧은 yes/no 질문 하나를 `anthropic/claude-sonnet-5.5`로 보냄 → 단순 분류에 비해 과한 비용.
+- `typesafe/jev-latest`라는 ID는 없음. `~typesafe/jev-latest`(최신 Jev로 리다이렉트)와 `typesafe/jev-1.14`는 chat/completions가 아닌 Decisions API 전용 모델.
+- Jev 1.14 샘플 7건: 빅데이터 0.96 · 보안 0.96 · AI 아이디어 0.85 · 모바일신분증 0.83 / AI 도구 영상 0.08 · 슬로건 0.08 / 창업 IR 0.50(애매 → 2차). 건당 약 $0.00002, 약 0.5초.
+- `~typesafe/jev-latest` 대신 버전을 고정(`jev-1.14`)한 이유: 모델이 바뀌면 판정 기준이 몰래 달라지기 때문. 버전 올리기는 `CLASSIFIER_MODEL` 변수로 함.
 
 ## 2. 조사 결과 (근거)
 
@@ -116,7 +124,7 @@ needs_review: bool         review_reasons: [str]
 1. 위비티·링커리어 이용약관상 수집 허용 범위
 2. GITHUB_TOKEN으로 만든 Issue의 Watch 메일 발송 여부 (첫 실행 때 테스트하고, 안 되면 PAT 또는 GitHub App 사용)
 3. bot 커밋이 60일 비활성 판정에서 활동으로 인정되는지
-4. `typesafe/jev-router`의 비용. /models의 가격이 `-1`(요청마다 라우팅 대상에 따라 달라짐)이라 실행당 비용 상한을 사전에 계산할 수 없음 (미확인). OpenRouter 대시보드에서 첫 몇 주 비용을 확인 필요
+4. Jev 판정 품질 (샘플 7건만 확인함). 첫 몇 주는 `-v` 로그의 판정 근거(p값)를 보고 임계값(0.35/0.65)을 조정할 필요가 있음. Decisions API는 alpha 단계라 사양이 바뀔 수 있음 (미확인)
 5. 링커리어 `__NEXT_DATA__` 스키마의 안정성 (깨지면 소스 실패로 보고)
 6. Issue 생성 시 없는 라벨(`digest`)이 자동으로 만들어지는지 (미확인. 안 되면 라벨을 수동으로 생성)
 

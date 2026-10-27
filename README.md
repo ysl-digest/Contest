@@ -23,7 +23,7 @@ IT·데이터·AI 공모전을 매주 모아 **GitHub Issue 다이제스트**로
 ### 동작 방식
 ```
 collect(소스별 전체 목록) → dedupe(마감·state.json·소스 간 같은 제목)
-  → classify(Jev Router/SLM으로 IT 주제 판정, 비IT는 상태에만 기록) → fetch(상세·포스터)
+  → classify(Jev 결정 모델로 IT 판정, 애매한 건만 LLM 재판정, 비IT는 상태에만 기록) → fetch(상세·포스터)
   → extract(OpenRouter VLM, JSON 스키마) → validate(형식·범위, 재시도/대체 모델)
   → render(마크다운) → publish(Issue 생성) → data/state.json 커밋
 ```
@@ -38,8 +38,8 @@ Settings → Secrets and variables → Actions
 | Secret | `ISSUE_TOKEN` | 선택 | Issue 작성용 PAT(fine-grained, 이 저장소의 Issues: Read and write). 없으면 `GITHUB_TOKEN` 사용 |
 | Variable | `VLM_MODEL` | 선택 | 추출 주 모델 (기본 `qwen/qwen3.7-flash`) |
 | Variable | `VLM_FALLBACK_MODEL` | 선택 | 추출 대체 모델 (기본 `deepseek/deepseek-v4.1-flash`) |
-| Variable | `CLASSIFIER_MODEL` | 선택 | IT 분류 모델 (기본 `typesafe/jev-router`) |
-| Variable | `CLASSIFIER_FALLBACK_MODEL` | 선택 | IT 분류 대체 SLM (기본 `qwen/qwen3.5-9b`) |
+| Variable | `CLASSIFIER_MODEL` | 선택 | IT 분류 결정 모델, Decisions API (기본 `typesafe/jev-1.14`) |
+| Variable | `CLASSIFIER_FALLBACK_MODEL` | 선택 | 애매·실패 건 2차 분류 LLM (기본 `qwen/qwen3.7-flash`) |
 
 추가로 Settings → Actions → General → Workflow permissions가 **Read and write**여야 상태 파일을 커밋할 수 있습니다.
 

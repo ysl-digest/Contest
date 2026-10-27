@@ -33,6 +33,7 @@ class RunResult:
     contests: list[Contest] = field(default_factory=list)
     marks: list[Mark] = field(default_factory=list)
     verdicts: dict[str, Verdict] = field(default_factory=dict)
+    titles: dict[str, str] = field(default_factory=dict)
     collected: int = 0
     failures: dict[str, str] = field(default_factory=dict)
     deferred: int = 0
@@ -69,6 +70,7 @@ def run(settings: Settings, http: HttpClient, state: State, today: date, names: 
     if use_llm and classifier is None:
         classifier = Classifier(settings)
     result.verdicts = classifier.classify(new) if classifier else classify_by_keyword(new)
+    result.titles = {it.key: it.title for it in new}
     it_items = []
     for listing in new:
         if result.verdicts[listing.key].is_it:

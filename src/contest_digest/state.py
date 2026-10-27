@@ -23,9 +23,9 @@ class State:
         return set(self.items)
 
     def seen_titles(self) -> set[str]:
-        from .filters import title_key
+        from .filters import title_keys
 
-        return {title_key(v["title"]) for v in self.items.values() if v.get("title")}
+        return {k for v in self.items.values() if v.get("title") for k in title_keys(v["title"])}
 
     def mark(self, key: str, today: date, apply_end: date | None, issue_number: int | None,
              title: str | None = None, is_it: bool | None = None) -> None:

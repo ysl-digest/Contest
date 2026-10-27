@@ -49,13 +49,17 @@ def test_state_missing_file(tmp_path):
 
 
 def test_cross_source_title_dedupe(today):
-    from contest_digest.filters import title_key
+    from contest_digest.filters import title_keys
 
     a = L("1", "2026 DATA·AI 분석 경진대회", end=today, source="wevity")
     b = L("2", "[KISTI] 2026 DATA·AI 분석 경진대회", end=today, source="linkareer")
     c = L("3", "2026 데이터 분석 경진대회", end=today)
-    assert title_key(a.title) == title_key(b.title)
+    assert title_keys(a.title) & title_keys(b.title)
     got = select_new([a, b, c], set(), today)
     assert len(got) == 2 and {g.title for g in got} >= {"2026 데이터 분석 경진대회"}
     # 지난 실행에서 보낸 제목도 제외
-    assert select_new([b], set(), today, seen_titles={title_key(a.title)}) == []
+    assert select_new([b], set(), today, seen_titles=title_keys(a.title)) == []
+    # 부제 표기만 다른 경우 (실제 사례)
+    w = L("4", "[CJ제일제당] 햇반 30주년 AI 공모전 (갓 지은 AI디어)", end=today, source="wevity")
+    k = L("5", "[CJ제일제당] 햇반 30주년 AI 공모전 ‘갓 지은 AI디어’", end=today, source="linkareer")
+    assert len(select_new([w, k], set(), today)) == 1

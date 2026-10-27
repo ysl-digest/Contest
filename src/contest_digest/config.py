@@ -39,8 +39,11 @@ class Settings:
     openrouter_base_url: str = field(default_factory=lambda: _env("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"))
     vlm_model: str = field(default_factory=lambda: _env("VLM_MODEL", "qwen/qwen3.7-flash"))
     vlm_fallback_model: str = field(default_factory=lambda: _env("VLM_FALLBACK_MODEL", "deepseek/deepseek-v4.1-flash"))
-    classifier_model: str = field(default_factory=lambda: _env("CLASSIFIER_MODEL", "typesafe/jev-router"))
-    classifier_fallback_model: str = field(default_factory=lambda: _env("CLASSIFIER_FALLBACK_MODEL", "qwen/qwen3.5-9b"))
+    classifier_model: str = field(default_factory=lambda: _env("CLASSIFIER_MODEL", "typesafe/jev-1.14"))
+    classifier_fallback_model: str = field(default_factory=lambda: _env("CLASSIFIER_FALLBACK_MODEL", "qwen/qwen3.7-flash"))
+    # Jev 확률이 이 구간(low, high) 안이면 애매한 것으로 보고 2차 LLM에 다시 묻는다
+    classify_low: float = field(default_factory=lambda: float(_env("CLASSIFY_LOW", "0.35")))
+    classify_high: float = field(default_factory=lambda: float(_env("CLASSIFY_HIGH", "0.65")))
     classify_batch: int = field(default_factory=lambda: int(_env("CLASSIFY_BATCH", "40")))
     max_items: int = field(default_factory=lambda: int(_env("MAX_ITEMS", "40")))
     max_posters: int = field(default_factory=lambda: int(_env("MAX_POSTERS", "2")))

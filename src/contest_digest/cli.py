@@ -49,7 +49,8 @@ def cmd_run(args, settings: Settings) -> int:
                      result.collected, len(result.contests), result.non_it)
         if args.verbose:
             for key, v in result.verdicts.items():
-                logging.debug("분류 %s %s (%s, %s)", "IT " if v.is_it else "비IT", key, v.reason, v.by)
+                logging.debug("분류 %s %s %s (%s, %s)", "IT " if v.is_it else "비IT", key,
+                              result.titles.get(key, "")[:40], v.reason, v.by)
         return 0
 
     if len(result.failures) == len(args.sources):
@@ -76,7 +77,7 @@ def cmd_check_model(args, settings: Settings) -> int:
     by_id = {m["id"]: m for m in data}
     ok = True
     roles = [("VLM", settings.vlm_model, True), ("VLM 대체", settings.vlm_fallback_model, True),
-             ("분류", settings.classifier_model, False), ("분류 대체", settings.classifier_fallback_model, False)]
+             ("분류 대체", settings.classifier_fallback_model, False)]
     for role, model, need_image in roles:
         m = by_id.get(model)
         if not m:
@@ -91,6 +92,16 @@ def cmd_check_model(args, settings: Settings) -> int:
         print(f"{'✓' if usable else '✗'} [{role}] {model}: image={image} 출력={mode} "
               f"prompt=${price.get('prompt')}/tok completion=${price.get('completion')}/tok")
         ok &= usable
+    # Jev 같은 결정 모델은 /models 목록에 없으므로 엔드포인트 정보로 확인한다
+    model = settings.classifier_model.lstrip("~")
+    resp = requests.get(f"{settings.openrouter_base_url}/models/{model}/endpoints", timeout=30)
+    endpoints = resp.json().get("data", {}).get("endpoints", []) if resp.ok else []
+    if endpoints:
+        price = endpoints[0].get("pricing", {})
+        print(f"✓ [분류] {settings.classifier_model}: Decisions API prompt=${price.get('prompt')}/tok")
+    else:
+        print(f"✗ [분류] {settings.classifier_model}: 엔드포인트 없음")
+        ok = False
     return 0 if ok else 1
 
 

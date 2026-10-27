@@ -41,9 +41,14 @@ _BRACKETS = re.compile(r"[\[\(【<（][^\]\)】>）]*[\]\)】>）]")
 _NON_WORD = re.compile(r"[^0-9a-z가-힣]")
 
 
-def title_key(title: str) -> str:
-    """소스 간 같은 공모전을 찾기 위한 정규화 제목. 괄호 안 부연과 기호·공백을 뺀다."""
-    return _NON_WORD.sub("", _BRACKETS.sub("", title.lower()))
+def title_keys(title: str) -> set[str]:
+    """소스 간 같은 공모전을 찾기 위한 정규화 제목들.
+
+    소스마다 부제를 괄호·따옴표 등 다르게 표기하므로 ① 괄호 안 부연을 뺀 것 ② 기호만 뺀 것
+    두 가지를 만들고, 하나라도 겹치면 같은 공모전으로 본다.
+    """
+    t = title.lower()
+    return {k for k in (_NON_WORD.sub("", _BRACKETS.sub("", t)), _NON_WORD.sub("", t)) if k}
 
 
 def select_new(listings: list[Listing], seen: set[str], today: date,
@@ -52,10 +57,10 @@ def select_new(listings: list[Listing], seen: set[str], today: date,
     out: dict[str, Listing] = {}
     titles = set(seen_titles)
     for it in sorted(listings, key=lambda x: x.key):
-        tkey = title_key(it.title)
-        if it.key in seen or it.key in out or (tkey and tkey in titles):
+        tkeys = title_keys(it.title)
+        if it.key in seen or it.key in out or tkeys & titles:
             continue
         if is_open(it, today):
             out[it.key] = it
-            titles.add(tkey)
+            titles |= tkeys
     return sorted(out.values(), key=lambda x: (x.apply_end or date.max, x.key))
