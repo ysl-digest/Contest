@@ -767,23 +767,6 @@
         "categories": []
       }
     },
-    "linkareer:359946": {
-      "title": "제6회 인천공항 여행 공모전 「내가 만드는 한국여행」",
-      "first_seen": "2026-10-27",
-      "apply_end": "2026-11-29",
-      "it": false,
-      "status": "pending",
-      "issue": null,
-      "listing": {
-        "source": "linkareer",
-        "id": "359946",
-        "title": "제6회 인천공항 여행 공모전 「내가 만드는 한국여행」",
-        "url": "https://linkareer.com/activity/359946",
-        "host": "인천국제공항공사",
-        "apply_end": "2026-11-29",
-        "categories": []
-      }
-    },
     "linkareer:359961": {
       "title": "모두의 AI 정책브랜드 대국민 공모전",
       "first_seen": "2026-10-27",
@@ -816,14 +799,6 @@
         "apply_end": "2026-11-15",
         "categories": []
       }
-    },
-    "linkareer:359946": {
-      "title": "제6회 인천공항 여행 공모전 「내가 만드는 한국여행」",
-      "first_seen": "2026-10-27",
-      "apply_end": "2026-11-29",
-      "it": false,
-      "status": "skipped",
-      "issue": null
     },
     "wevity:109516": {
       "title": "2026 디자인 크리에이션 챌린지(DCC) 3D프린팅 제품디자인 공모전",
