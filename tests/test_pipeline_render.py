@@ -31,7 +31,7 @@ def test_offline_pipeline_no_llm(http, today):
     assert set(keys) == {"wevity:900001", "wevity:900002", "linkareer:800001"}
     assert not result.failures
     assert "가을 시 낭송" not in result.body and "슬로건" not in result.body
-    assert result.title.startswith("주간 공모전 - ") and result.title.endswith("째주 IT 공모전")
+    assert result.title.startswith("주간 공모전 - ") and result.title.endswith("째주 IT·AI 공모전")
 
 
 def test_source_failure_isolated(http, today, monkeypatch):
@@ -128,7 +128,7 @@ def test_title_week_of_month():
 
     from contest_digest.render import title, week_of_month
 
-    assert title([], date(2026, 10, 12)) == "주간 공모전 - 10월 3째주 IT 공모전"
+    assert title([], date(2026, 10, 12)) == "주간 공모전 - 10월 3째주 IT·AI 공모전"
     assert week_of_month(date(2026, 10, 1)) == (10, 1)   # 목요일
     assert week_of_month(date(2026, 10, 26)) == (10, 5)
     assert week_of_month(date(2026, 11, 30)) == (12, 1)  # 그 주 목요일이 12월

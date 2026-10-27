@@ -66,7 +66,7 @@ def week_of_month(d: date) -> tuple[int, int]:
 
 def title(contests: list[Contest], today: date) -> str:
     month, week = week_of_month(today)
-    return f"주간 공모전 - {month}월 {week}째주 IT 공모전"
+    return f"주간 공모전 - {month}월 {week}째주 IT·AI 공모전"
 
 
 def render(contests: list[Contest], today: date, urgent_days: int = 7) -> str:

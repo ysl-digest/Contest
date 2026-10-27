@@ -21,7 +21,7 @@ Settings → Secrets and variables → Actions
 | 종류 | 이름 | 필수 | 설명 |
 |---|---|---|---|
 | Secret | `OPENROUTER_API_KEY` | ✅ | OpenRouter API 키. 없으면 VLM 없이 메타데이터만 게시 |
-| Secret | `ISSUE_TOKEN` | ✅ | 발행 저장소에 Issue를 쓰는 토큰. yeseo-bot 계정의 fine-grained PAT (Repository access: `Contest-Subscribe`만, Permissions: Issues Read and write) |
+| Secret | `ISSUE_TOKEN` | ✅ | 발행 저장소용 fine-grained PAT (Resource owner: `yeseo-bot`, Repository access: `Contest-Subscribe`만). Permissions: **Issues: Read and write**(발행·잠금), **Administration: Read and write**(상호작용 제한 갱신) |
 | Variable | `ISSUE_REPO` | 선택 | 발행 저장소 (기본 `yeseo-bot/Contest-Subscribe`) |
 | Variable | `VLM_MODEL` | 선택 | 추출 주 모델 (기본 `qwen/qwen3.7-flash`) |
 | Variable | `VLM_FALLBACK_MODEL` | 선택 | 추출 대체 모델 (기본 `deepseek/deepseek-v4.1-flash`) |
@@ -46,6 +46,11 @@ python -m contest_digest -v run --dry-run --max-items 3  # 분류 판정 근거(
 python -m contest_digest collect --sources wevity        # 목록 수집 결과만
 python -m contest_digest check-model                     # 모델 존재·이미지 입력·JSON 출력 방식 확인
 ```
+
+## 구독자 메일 오염 방지
+- Contest-Subscribe는 **상호작용 제한(협업자만)**이 걸려 있어 외부인이 Issue·댓글을 쓸 수 없습니다. 최대 6개월짜리 설정이라 실제 발행 실행 때마다 6개월로 갱신합니다.
+- 발행한 Issue는 바로 잠가서(lock) 댓글을 막습니다.
+- 갱신이나 잠금에 실패하면 발행은 계속하고 로그에 경고만 남깁니다. 토큰 권한을 확인하세요.
 
 ## 처리 이력 (`data/state.json`)
 - `status`: `sent`(발송) · `skipped`(비IT·마감) · `pending`(IT지만 상한·오류로 이월)

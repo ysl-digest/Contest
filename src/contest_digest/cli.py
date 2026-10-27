@@ -11,7 +11,7 @@ from .config import Settings, today_kst
 from .http import HttpClient
 from .offline import FixtureHttp
 from .pipeline import collect, run, save_marks
-from .publish import create_issue
+from .publish import create_issue, lock_issue, renew_interaction_limit
 from .sources import SOURCES
 from .state import State
 
@@ -61,8 +61,17 @@ def cmd_run(args, settings: Settings) -> int:
         issue = create_issue(settings.github_token, settings.issue_repo, result.title, result.body,
                              [settings.issue_label])
         logging.info("Issue #%d 생성", issue)
+        try:
+            lock_issue(settings.github_token, settings.issue_repo, issue)
+        except Exception as exc:  # noqa: BLE001 - 이미 발행됐으므로 상태 저장은 계속한다
+            logging.warning("Issue #%d 잠금 실패: %s", issue, exc)
     else:
         logging.info("신규 0건: Issue 생성 생략")
+    try:
+        expires = renew_interaction_limit(settings.github_token, settings.issue_repo)
+        logging.info("상호작용 제한(협업자만) 갱신, 만료 %s", expires)
+    except Exception as exc:  # noqa: BLE001 - 토큰에 Administration 권한이 없으면 실패
+        logging.warning("상호작용 제한 갱신 실패 (ISSUE_TOKEN에 Administration 쓰기 권한 필요): %s", exc)
     save_marks(state, result, today, issue)
     state.prune(today, settings.state_retention_days)
     state.save(settings.state_path, today)
