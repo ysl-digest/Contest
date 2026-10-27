@@ -42,8 +42,8 @@ JSON_SCHEMA = {
                 "items": {
                     "type": "object",
                     "additionalProperties": False,
-                    "required": ["label", "date", "note"],
-                    "properties": {"label": {"type": "string"}, "date": _STR, "note": _STR},
+                    "required": ["label", "date", "end_date", "note"],
+                    "properties": {"label": {"type": "string"}, "date": _STR, "end_date": _STR, "note": _STR},
                 },
             },
             "prize_total": _STR,

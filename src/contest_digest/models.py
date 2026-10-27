@@ -39,7 +39,8 @@ class Detail:
 
 class OtherDate(BaseModel):
     label: str
-    date: str | None = None
+    date: str | None = None  # 하루짜리 일정의 날짜, 기간이면 시작일
+    end_date: str | None = None  # 기간 일정의 종료일
     note: str | None = None
 
 

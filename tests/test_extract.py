@@ -31,7 +31,11 @@ def good(today, **over):
         "title": "제1회 가상 AI 데이터 분석 경진대회", "host": "가상데이터진흥원", "category": "AI/데이터",
         "topic": "공공 데이터로 생활 문제를 푸는 AI 모델 개발", "apply_start": (today - timedelta(days=10)).isoformat(),
         "apply_end": (today + timedelta(days=5)).isoformat(),
-        "other_dates": [{"label": "결과 발표", "date": (today + timedelta(days=30)).isoformat(), "note": None}],
+        "other_dates": [
+            {"label": "결과 발표", "date": (today + timedelta(days=30)).isoformat(), "end_date": None, "note": None},
+            {"label": "본선", "date": (today + timedelta(days=20)).isoformat(),
+             "end_date": (today + timedelta(days=22)).isoformat(), "note": None},
+        ],
         "prize_total": "1천만원", "prize_details": ["대상 1팀 500만원"], "eligibility": "대학(원)생, 일반인",
         "team_size": "1~4인", "submission": "보고서(PDF), 소스코드",
     }
@@ -105,3 +109,17 @@ def test_model_without_structured_outputs_uses_json_object(http, today):
     assert req["response_format"] == {"type": "json_object"} and "extra_body" not in req
     assert req["messages"][0]["role"] == "system" and "apply_end" in req["messages"][0]["content"]
     assert not c.needs_review
+
+
+def test_other_dates_period_validation(today):
+    import pytest
+
+    from contest_digest.models import Extraction
+    from contest_digest.validate import ValidationError, check
+
+    ok = Extraction.model_validate_json(good(today))
+    check(ok, today)
+    for bad in ({"label": "기간", "date": "2026-11-05 ~ 2026-12-05", "end_date": None, "note": None},
+                {"label": "역순", "date": "2026-12-05", "end_date": "2026-11-05", "note": None}):
+        with pytest.raises(ValidationError):
+            check(Extraction.model_validate_json(good(today, other_dates=[bad])), today)

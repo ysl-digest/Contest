@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from .models import Contest
+from .models import Contest, OtherDate
 
 SOURCE_NAMES = {"wevity": "위비티", "linkareer": "링커리어"}
 
@@ -23,6 +23,12 @@ def _dday(end: str | None, today: date) -> str:
     return f"{end} ({label})"
 
 
+def _period(d: OtherDate) -> str:
+    if d.date and d.end_date and d.end_date != d.date:
+        return f"{d.date} ~ {d.end_date}"
+    return d.date or d.end_date or d.note or "?"
+
+
 def _block(c: Contest, today: date) -> str:
     lines = [f"### [{_esc(c.title)}]({c.source_url})"]
     meta = [f"**마감** {_dday(c.apply_end, today)}", f"**주최** {_esc(c.host)}"]
@@ -37,7 +43,7 @@ def _block(c: Contest, today: date) -> str:
         ("참가 자격", c.eligibility),
         ("팀 구성", c.team_size),
         ("제출물", c.submission),
-        ("기타 일정", ", ".join(f"{d.label} {d.date or d.note or '?'}" for d in c.other_dates) or None),
+        ("기타 일정", ", ".join(f"{d.label} {_period(d)}" for d in c.other_dates) or None),
     ]
     for name, value in rows:
         if value:

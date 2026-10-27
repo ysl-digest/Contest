@@ -33,7 +33,10 @@ def check(ext: Extraction, today: date) -> None:
     if start and end and end < start:
         raise ValidationError(f"apply_end({end}) < apply_start({start})")
     for od in ext.other_dates:
-        _parse_date(od.date, f"other_dates[{od.label}]")
+        start = _parse_date(od.date, f"other_dates[{od.label}].date")
+        end = _parse_date(od.end_date, f"other_dates[{od.label}].end_date")
+        if start and end and end < start:
+            raise ValidationError(f"other_dates[{od.label}] 종료일({end}) < 시작일({start})")
 
 
 def finalize(ext: Extraction | None, detail: Detail, reasons: list[str]) -> Contest:

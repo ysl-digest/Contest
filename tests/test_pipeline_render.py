@@ -113,3 +113,11 @@ def test_pipeline_with_classifier_marks_non_it(http, today, tmp_path):
     # 다음 실행에서는 모두 기처리
     again = run(s, http, state, today, ["wevity", "linkareer"], use_llm=False, classifier=FakeClassifier())
     assert again.contests == [] and again.marks == []
+
+
+def test_render_other_date_period(today):
+    from contest_digest.models import OtherDate
+
+    c = C("wevity:1", "2026-11-20", other_dates=[OtherDate(label="본선", date="2026-11-05", end_date="2026-11-06"),
+                                                 OtherDate(label="발표", date="2026-12-01")])
+    assert "본선 2026-11-05 ~ 2026-11-06, 발표 2026-12-01" in render([c], today)
