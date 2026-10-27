@@ -64,7 +64,7 @@ class Settings:
     # 다른 저장소에 Issue를 쓰므로 GITHUB_TOKEN이 아닌 PAT/App 토큰이 필요하다
     github_token: str = field(default_factory=lambda: os.environ.get("ISSUE_TOKEN", ""))
     # Issue를 발행할 저장소 (코드 저장소와 분리). 구독자는 이 저장소를 Watch한다
-    issue_repo: str = field(default_factory=lambda: _env("ISSUE_REPO", "yeseo-bot/Contest-Subscribe"))
+    issue_repo: str = field(default_factory=lambda: _env("ISSUE_REPO", "yeseo-bot/Contest-Subscribe-IT"))
     non_it_issue_repo: str = field(default_factory=lambda: _env("NON_IT_ISSUE_REPO", "yeseo-bot/Contest-Subscribe-Non-IT"))
     issue_label: str = "digest"
     state_path: Path = field(default_factory=lambda: Path(_env("STATE_PATH", str(ROOT / "data" / "state.json"))))

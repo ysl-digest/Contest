@@ -2,7 +2,7 @@
 
 공모전을 매주 모아 IT·Non-IT로 나눠 GitHub Issue 다이제스트로 발행하는 봇의 **코드 저장소**입니다.
 
-- IT·데이터·AI 공모전 구독: **[yeseo-bot/Contest-Subscribe](https://github.com/yeseo-bot/Contest-Subscribe)** ← Watch
+- IT·데이터·AI 공모전 구독: **[yeseo-bot/Contest-Subscribe-IT](https://github.com/yeseo-bot/Contest-Subscribe-IT)** ← Watch
 - 그 외 분야 공모전 구독: **[yeseo-bot/Contest-Subscribe-Non-IT](https://github.com/yeseo-bot/Contest-Subscribe-Non-IT)** ← Watch
 - 이 저장소: 수집·분류·추출 코드, 주간 워크플로, 처리 이력(`data/state.json`)
 
@@ -12,7 +12,7 @@
                 → classify(Jev 결정 모델로 IT 판정, 애매한 건만 LLM 재판정)
                 → 신규 건을 트랙(IT/Non-IT)별 대기열(pending)에 저장 → state.json 커밋
 [publish-it]    IT 대기열 마감순 최대 50건 → fetch(상세·포스터) → extract(VLM) → validate
-                → render → Contest-Subscribe에 Issue → state.json 커밋
+                → render → Contest-Subscribe-IT에 Issue → state.json 커밋
                 (VLM이 비IT 분야로 판정한 건은 Non-IT 대기열로 넘김)
 [publish-non-it] Non-IT 대기열로 같은 과정 → Contest-Subscribe-Non-IT에 Issue → state.json 커밋
 ```
@@ -25,8 +25,8 @@ Settings → Secrets and variables → Actions
 | 종류 | 이름 | 필수 | 설명 |
 |---|---|---|---|
 | Secret | `OPENROUTER_API_KEY` | ✅ | OpenRouter API 키. 없으면 VLM 없이 메타데이터만 게시 |
-| Secret | `ISSUE_TOKEN` | ✅ | 발행 저장소용 fine-grained PAT (Resource owner: `yeseo-bot`, Repository access: `Contest-Subscribe`, `Contest-Subscribe-Non-IT`). Permissions: **Issues: Read and write**(발행·잠금), **Administration: Read and write**(상호작용 제한 갱신) |
-| Variable | `ISSUE_REPO` | 선택 | IT 발행 저장소 (기본 `yeseo-bot/Contest-Subscribe`) |
+| Secret | `ISSUE_TOKEN` | ✅ | 발행 저장소용 fine-grained PAT (Resource owner: `yeseo-bot`, Repository access: `Contest-Subscribe-IT`, `Contest-Subscribe-Non-IT`). Permissions: **Issues: Read and write**(발행·잠금), **Administration: Read and write**(상호작용 제한 갱신) |
+| Variable | `ISSUE_REPO` | 선택 | IT 발행 저장소 (기본 `yeseo-bot/Contest-Subscribe-IT`) |
 | Variable | `NON_IT_ISSUE_REPO` | 선택 | Non-IT 발행 저장소 (기본 `yeseo-bot/Contest-Subscribe-Non-IT`) |
 | Variable | `VLM_MODEL` | 선택 | 추출 주 모델 (기본 `qwen/qwen3.7-flash`) |
 | Variable | `VLM_FALLBACK_MODEL` | 선택 | 추출 대체 모델 (기본 `deepseek/deepseek-v4.1-flash`) |
