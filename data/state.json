@@ -1,4 +1,929 @@
 {
-  "last_run": null,
-  "items": {}
+  "last_run": "2026-10-27",
+  "items": {
+    "linkareer:351157": {
+      "title": "한국투자증권 대학생 모의투자대회 '한투모투배틀'",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:353328": {
+      "title": "2026 POSTECH OIBC 빅데이터 경진대회",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": true,
+      "issue": 1
+    },
+    "linkareer:354228": {
+      "title": "행정안전부 2026 모바일신분증 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": true,
+      "issue": 1
+    },
+    "linkareer:355613": {
+      "title": "[건강보험심사평가원] 우리 동네 병원과 가까워지는 한마디 슬로건 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-01",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358629": {
+      "title": "텐퍼센트커피 커스텀 레시피 콘테스트",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358723": {
+      "title": "서울특별시 행정서식, 뚝딱뚝딱! 개선 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358726": {
+      "title": "2026 단양 유네스코 세계지질공원 학생 홍보콘텐츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358727": {
+      "title": "2026 권숙자 안젤리미술관 전국 대학·대학원 우수 작품전 청년작가 발굴 보고寶庫전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-02",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358732": {
+      "title": "DOCUMENTARY STORY ESSAY CONTEST 꿈꾸던 어른이 되었나요",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358736": {
+      "title": "(서울시 중구)관광콘텐츠(숏폼&아티클)공모전 '중구 하루 여행‘",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-15",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358737": {
+      "title": "OPEN HARBOR 2026 | 글로벌 창업 AI 해커톤",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-28",
+      "it": true,
+      "issue": 1
+    },
+    "linkareer:358740": {
+      "title": "강레오X탄탄대로 나만의 토마토 레시피 EVENT",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-11",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358787": {
+      "title": "2026년도 대한민국 SW 기술대상 및 IT 아키텍처대상",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": true,
+      "issue": 1
+    },
+    "linkareer:358827": {
+      "title": "2026 광명시 올해의 책 독후감 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-22",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358831": {
+      "title": "『거제스토리텔링북 14집』 원고 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358840": {
+      "title": "실손24 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358854": {
+      "title": "2026 NIA 탄소중립 혁신 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-08",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358859": {
+      "title": "전국화물자동차공제조합 영상 콘텐츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-15",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358864": {
+      "title": "[구리시상권활성화재단] 우리 동네 PICK! 쇼츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358867": {
+      "title": "[한국인터넷기업협회] 건전한 사이버 세상 만들기 '디지털 공감' 숏폼 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-05",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358928": {
+      "title": "[종로구] 2026 종로구 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358929": {
+      "title": "[국회미래연구원] 국회 미래세대 미래의제 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-25",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358971": {
+      "title": "현대모비스 창립 50주년 굿즈 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-18",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:358982": {
+      "title": "〈드골2: 자유의 시대〉 포스터·굿즈 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-11",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359003": {
+      "title": "[익산지방국토관리청] 제8회 아름다운 해상교량 사진 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-16",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359011": {
+      "title": "제2회 잠실 미디어아트 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-27",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359017": {
+      "title": "2026 주얼리 예술제",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-28",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359141": {
+      "title": "제 2회 직스캐드 AX 경진대회 (CAD 공모전, 설계 공모전, 영상 공모전)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-08",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359156": {
+      "title": "2026 제2회 대한민국 AI 창조공모대전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-27",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359166": {
+      "title": "2026 제11회 장기려봉사상 청소년·대학생 자원봉사 체험수기 발표대회(10/23~11/30 접수)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359172": {
+      "title": "[대한구강보건협회] 제59회 2026 구강보건 작품 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-01-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359205": {
+      "title": "마이웨이북스 나도 이제 출간작가, 원고 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-23",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359206": {
+      "title": "[카페385] 2027 전시작가 공개모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-22",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359208": {
+      "title": "2026 화성 황금해안길 사진·숏폼 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-24",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359212": {
+      "title": "[부산대자율상권조합] 부산대 자율상권 통합브랜드 및 특화거리 네이밍 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-28",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359223": {
+      "title": "제5회 한국여성작가 회화공모전 & K-WOMEN IN PARIS",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359349": {
+      "title": "2026 리셋 로그(RESET LOG) 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-07",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359357": {
+      "title": "2026 서울시여성가족재단 다목적라운지 전시 작품 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-04",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359362": {
+      "title": "완주군 피지컬AI 실증단지 명칭 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-15",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359363": {
+      "title": "2026 경북 로컬 관광자원 혁신 콘텐츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-06",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359366": {
+      "title": "제 4회 도전! 좋은병원들 릴스왕",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359367": {
+      "title": "2026 청춘런",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-08",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359368": {
+      "title": "CHANGE WITH 6G_어린이 미래 상상 그림 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-16",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359370": {
+      "title": "수원방문의해 관광 숏폼 영상 공모전 '수원, 다시보다 시즌2'",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-13",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359371": {
+      "title": "부안 지방정원 제2회 가을 사진 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-05",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359372": {
+      "title": "2026 안산시 ‘청렴한 순간, 숏하게!’ 청렴숏폼 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-06",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359373": {
+      "title": "제26회 국립순천대학교 청소년 문예백일장 개최",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-04",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359374": {
+      "title": "2026년 마을TV 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359375": {
+      "title": "2026 세종 청년의 내일, 일자리 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-06",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359376": {
+      "title": "2026 전주세계소리축제 '소리브릿지' 참여예술인 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-28",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359442": {
+      "title": "[총상금 2천만원] 비비드 RE: PLAY 6개 IP로 만드는 AI 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359530": {
+      "title": "대전관광공사 디깅대전 사진공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-01",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359532": {
+      "title": "2026 MTN 중소기업 광고공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-06",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359533": {
+      "title": "2027 오펜 공모전 (스토리텔러)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-01-18",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359542": {
+      "title": "[씬메이커] 예의주시 스토리 소재 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-01-18",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359547": {
+      "title": "시민의 생각으로 여는 민선9기 강릉 2026년 시민 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-13",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359550": {
+      "title": "2026 의왕시 청년e-Room 창업아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-11",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359561": {
+      "title": "DNSFF 다낭국제스마트폰영화제 2026",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-08",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359567": {
+      "title": "2026 체육관련 규제개선 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-22",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359589": {
+      "title": "2026 제7회 평화통일 사진 & 동영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-11",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359592": {
+      "title": "제 2회 전국 대학생 사회적기업 우수사례발굴 경진대회",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359615": {
+      "title": "2026년 서울중구시설관리공단 ESG혁신 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-08",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359653": {
+      "title": "국민콜110 ‘일·일·공’ 삼행시 이벤트",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-15",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359654": {
+      "title": "두찜에서 맥북 네오 쏜다! 두찜 꿀조합 SNS 인증 이벤트",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359668": {
+      "title": "2026년 국방헬프콜 콘텐츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359671": {
+      "title": "2026 충남 문화CF 스타상 (청년예술부문) 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-19",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359672": {
+      "title": "2026 전남자치경찰 홍보 콘텐츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-01",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359674": {
+      "title": "제5회 LH가든(수원당수) 학생참여정원 아이디어공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359732": {
+      "title": "제1차 중소기업 소상공인 불합리 규제 발굴 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359744": {
+      "title": "한국공학한림원 공학의 가치 숏폼 콘테스트",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359784": {
+      "title": "2026 힐로웨이브 아트 프로젝트 (결을 읽는 사람들) 참여 작가 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-04",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359785": {
+      "title": "2026 부여 솔버톤 - 지역문제해결 아이디어 발굴 참가자 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-11",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359786": {
+      "title": "2026 제주 청소년 AI 리터러시 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359787": {
+      "title": "2026 강동문화재단 GAC Creative Bridge (아트 굿즈 창작지원 프로젝트)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359791": {
+      "title": "2026 순창 코리아 떡볶이 페스타 – 전국 떡볶이 플래시몹 경연대회 참가자",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-03",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359792": {
+      "title": "국가생명윤리정책원 2026년 ESG 대국민 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-13",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359793": {
+      "title": "[제3회] 매경 AI 광고 공모전 대한민국 AI 광고대상",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359794": {
+      "title": "2026-2027 서울영아티스트 전국 음악콩쿠르",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-06-09",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359796": {
+      "title": "2026 KHCU 실용음악 경연대회",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359797": {
+      "title": "「우리가 만드는 좋은 돌봄문화」장기요양기관 우수사례 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359798": {
+      "title": "동작구 관내 공원 시설명칭 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-01",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359799": {
+      "title": "2026 시민 AI영상 공모전 <응답하라, 제천> 공고",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359800": {
+      "title": "함께 만드는 마을, 더불어 자라는 돌봄 그림 사진 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359801": {
+      "title": "2026년 EBS AI교육 실습 도구 명칭 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-08",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359802": {
+      "title": "전주 남부시장 '누나를 찾아주세요' 체험 사진 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-24",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359803": {
+      "title": "한국도로공사 휴게소 숏폼 공모전 '무엇이든 그려보길'",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-04",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359823": {
+      "title": "2026 아름다운 우리말 달력 만들기 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-22",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359824": {
+      "title": "2026 부산 지역어 알리기 한 장 만화 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-22",
+      "it": false,
+      "issue": null
+    },
+    "linkareer:359860": {
+      "title": "제7회 한국섬유패션디자인 콘테스트",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-30",
+      "it": false,
+      "issue": null
+    },
+    "wevity:109516": {
+      "title": "2026 디자인 크리에이션 챌린지(DCC) 3D프린팅 제품디자인 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-02",
+      "it": false,
+      "issue": null
+    },
+    "wevity:109966": {
+      "title": "제14회 한옥디자인 국제 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-29",
+      "it": false,
+      "issue": null
+    },
+    "wevity:109996": {
+      "title": "제4회 현대문학x미래엔 청소년문학상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-02-01",
+      "it": false,
+      "issue": null
+    },
+    "wevity:110179": {
+      "title": "7th Da-Ho Award Asian International Short Film Competition(단편영화 공모전)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-01-16",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111378": {
+      "title": "2026 한국외식산업연구원 외식경영스타 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-03",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111546": {
+      "title": "미래에셋금융서비스 TAMS 글로벌금융인양성과정 17기 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-01",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111647": {
+      "title": "2026 신한 스퀘어브릿지 대학생 창업 공모전 HERO IR",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-03",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111750": {
+      "title": "선샤인 TIME TRAVEL 숏폼 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-13",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111768": {
+      "title": "2026 대경권 캠퍼스 IR 챔피언십 (창업 공모전)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-14",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111812": {
+      "title": "공모전 준비 중이라면? AI 교정 서비스 [교정의 신]과 함께!",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-01-01",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111829": {
+      "title": "수원방문의해 관광 숏폼 영상 하반기 공모전 (수원, 다시보다. 시즌2)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-14",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111830": {
+      "title": "제1회 스포츠가치센터 청소년동아리축제 스포츠로 다 같이, 다(多) 가치 참여 청소년동아리 예술 경연대회 참가자 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111831": {
+      "title": "제1회 스포츠가치센터 청소년동아리축제 스포츠로 다 같이, 다(多) 가치 참여 청소년동아리 스포츠 경연대회 참가자 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-31",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111832": {
+      "title": "우리집 아침밥 레시피 SNS 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-13",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111833": {
+      "title": "중구 관광홍보 콘텐츠 공모전 (중구 하루 여행)",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-16",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111834": {
+      "title": "[식품의약품안전처] 식중독 예방 숏폼 영상 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-24",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111835": {
+      "title": "제2회 손상예방의날 기념 경북권 손상 예방 포스터 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-09",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111836": {
+      "title": "2026년 희귀질환 극복수기·사진 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-19",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111838": {
+      "title": "제1회 중앙일보 어린이 미술대회",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-07",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111846": {
+      "title": "2026년 전남자치경찰 홍보 콘텐츠 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-02",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111853": {
+      "title": "제5회 LH가든(수원당수) 주민참여정원 아이디어공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-21",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111854": {
+      "title": "2026년 장애인 분야 해커톤 대회 (장애 플러스 기술) 시민평가단 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-28",
+      "it": true,
+      "issue": 1
+    },
+    "wevity:111855": {
+      "title": "[해양수산과학기술진흥원] 2026년도 KIMST ESG경영·혁신 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-10",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111856": {
+      "title": "2027 광남일보 한국문학대상",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-18",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111857": {
+      "title": "2027년 현대경제신문 신춘문예 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-01",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111858": {
+      "title": "2026 주얼리 예술제 참가자 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-29",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111859": {
+      "title": "세계일보 2027 신춘문예 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-03",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111860": {
+      "title": "2027 국제신문 신춘문예 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-04",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111861": {
+      "title": "2026년 체육관련 규제개선 대국민 아이디어 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-23",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111862": {
+      "title": "누크커피, 이모생각(분식) 방문형 블로그 서포터즈 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-10",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111879": {
+      "title": "제11회 장기려봉사상 청소년·대학생 자원봉사 체험수기 발표대회",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-12-01",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111881": {
+      "title": "한층 업그레이드된 책쓰기 프로젝트 59기 모집｜1인1권 출간보장/6주과정/인세지급",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-07",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111886": {
+      "title": "[한국관광공사] 공주·부여 C-투어버스 DRT 대학생 서포터즈 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-30",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111889": {
+      "title": "[강남 아이즈 윈터 크루] 2026 강남 아이즈 미디어 윈터 페스타 공식 서포터즈 모집 공고",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-10",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111891": {
+      "title": "DNSFF 다낭국제스마트폰영화제",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-09",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111899": {
+      "title": "농업가치 확산을 위한 농심천심 대학(원)생 논문 공모전",
+      "first_seen": "2026-10-27",
+      "apply_end": "2027-02-27",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111904": {
+      "title": "2027년 공주시 SNS 서포터즈 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-09",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111910": {
+      "title": "2026 순창 코리아 떡볶이 페스타 - 전국 대학 떡볶이 경연대회 참가자 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-04",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111911": {
+      "title": "2026 순창 코리아 떡볶이 페스타 – 전국 떡볶이  플래시몹 경연대회 참가자 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-04",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111916": {
+      "title": "2026 충남 문화예술후원사업 문화CF 스타상 (청년예술부문) 공모",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-20",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111921": {
+      "title": "2026 농림식품기술기획평가원 iPET 서포터즈 5기 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-14",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111922": {
+      "title": "2026 농림식품기술기획평가원 iPET 농플루언서 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-11-14",
+      "it": false,
+      "issue": null
+    },
+    "wevity:111927": {
+      "title": "2026 사회적기업 국제포럼 대학생 서포터즈 모집",
+      "first_seen": "2026-10-27",
+      "apply_end": "2026-10-28",
+      "it": false,
+      "issue": null
+    }
+  }
 }
