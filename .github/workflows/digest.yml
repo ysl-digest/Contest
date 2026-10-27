@@ -1,0 +1,63 @@
+name: weekly-digest
+
+on:
+  schedule:
+    - cron: "47 23 * * 0" # 월요일 08:47 KST (UTC 일요일 23:47, 정각 회피)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Issue 생성·상태 커밋 없이 결과만 로그로 출력"
+        type: boolean
+        default: true
+      max_items:
+        description: "VLM 처리 상한 (비우면 기본값 40)"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: weekly-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Run
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ISSUE_TOKEN: ${{ secrets.ISSUE_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          VLM_MODEL: ${{ vars.VLM_MODEL }}
+          VLM_FALLBACK_MODEL: ${{ vars.VLM_FALLBACK_MODEL }}
+          MAX_ITEMS: ${{ inputs.max_items }}
+        run: |
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
+            python -m contest_digest run --dry-run | tee "$GITHUB_STEP_SUMMARY"
+          else
+            python -m contest_digest run
+          fi
+
+      - name: Commit state
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/state.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(state): update $(TZ=Asia/Seoul date +%F)"
+          git push

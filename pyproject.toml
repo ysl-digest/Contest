@@ -1,0 +1,26 @@
+[project]
+name = "contest-digest"
+version = "0.1.0"
+description = "IT·데이터·AI 공모전 주간 다이제스트를 GitHub Issue로 발행"
+requires-python = ">=3.12"
+dependencies = [
+  "requests>=2.32",
+  "beautifulsoup4>=4.12",
+  "pydantic>=2.7",
+  "openai>=1.40",
+  "pillow>=10.4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
