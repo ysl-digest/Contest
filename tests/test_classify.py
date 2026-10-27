@@ -31,6 +31,7 @@ class FakeDecider:
 def make(scores, outputs=(), batch=40):
     s = Settings()
     s.classifier_model, s.classifier_fallback_model, s.classify_batch = "jev", "llm", batch
+    s.classify_low, s.classify_high = 0.35, 0.65
     client, comp = fake_client(list(outputs))
     caps = ModelCaps("unused", {"llm": {"structured_outputs"}})
     return Classifier(s, client, caps, FakeDecider(scores)), comp
