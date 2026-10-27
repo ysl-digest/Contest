@@ -3,9 +3,9 @@
 ### 저장소 구성 (2026-10-27 분리)
 | 저장소 | 역할 |
 |---|---|
-| [yeseo-bot/Contest](https://github.com/yeseo-bot/Contest) | 코드, 주간 워크플로, `data/state.json` 커밋 (커밋이 매주 생겨 60일 비활성화도 여기서 방지) |
-| [yeseo-bot/Contest-Subscribe-IT](https://github.com/yeseo-bot/Contest-Subscribe-IT) | Issue 발행 전용. 구독자는 여기를 Watch. 코드 커밋이 없어 구독자에게 Issue 알림만 감 |
-- 다른 저장소에 Issue를 쓰려면 `GITHUB_TOKEN`으로는 안 됨 → yeseo-bot 계정의 fine-grained PAT(`ISSUE_TOKEN`, Contest-Subscribe-IT의 Issues 쓰기만)를 씀. Issue 작성자가 사람 계정(yeseo-bot)이 되므로 Watch 메일 문제(§2 GitHub 항목)도 참고 모델과 같은 조건이 됨.
+| [ysl-digest/Contest](https://github.com/ysl-digest/Contest) | 코드, 주간 워크플로, `data/state.json` 커밋 (커밋이 매주 생겨 60일 비활성화도 여기서 방지) |
+| [ysl-digest/Contest-Subscribe-IT](https://github.com/ysl-digest/Contest-Subscribe-IT) | Issue 발행 전용. 구독자는 여기를 Watch. 코드 커밋이 없어 구독자에게 Issue 알림만 감 |
+- 다른 저장소에 Issue를 쓰려면 `GITHUB_TOKEN`으로는 안 됨 → ysl-digest 계정의 fine-grained PAT(`ISSUE_TOKEN`, Contest-Subscribe-IT의 Issues 쓰기만)를 씀. Issue 작성자가 사람 계정(ysl-digest)이 되므로 Watch 메일 문제(§2 GitHub 항목)도 참고 모델과 같은 조건이 됨.
 
 IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub Issue 다이제스트 1건으로 올린다. 저장소를 Watch한 사람은 이 Issue를 알림 메일로 받는다.
 
