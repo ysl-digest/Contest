@@ -41,9 +41,10 @@ class Settings:
     vlm_fallback_model: str = field(default_factory=lambda: _env("VLM_FALLBACK_MODEL", "deepseek/deepseek-v4.1-flash"))
     classifier_model: str = field(default_factory=lambda: _env("CLASSIFIER_MODEL", "typesafe/jev-1.14"))
     classifier_fallback_model: str = field(default_factory=lambda: _env("CLASSIFIER_FALLBACK_MODEL", "qwen/qwen3.7-flash"))
-    # Jev 확률이 이 구간(low, high) 안이면 애매한 것으로 보고 2차 LLM에 다시 묻는다
-    classify_low: float = field(default_factory=lambda: float(_env("CLASSIFY_LOW", "0.35")))
-    classify_high: float = field(default_factory=lambda: float(_env("CLASSIFY_HIGH", "0.65")))
+    # Jev 확률이 high 이상이면 IT, low 이하면 비IT, 그 사이는 2차 LLM에 다시 묻는다.
+    # 초기값은 IT를 넓게 통과시키는 느슨한 기준. 품질을 보며 변수로 올린다.
+    classify_low: float = field(default_factory=lambda: float(_env("CLASSIFY_LOW", "0.3")))
+    classify_high: float = field(default_factory=lambda: float(_env("CLASSIFY_HIGH", "0.5")))
     classify_batch: int = field(default_factory=lambda: int(_env("CLASSIFY_BATCH", "40")))
     max_items: int = field(default_factory=lambda: int(_env("MAX_ITEMS", "40")))
     max_posters: int = field(default_factory=lambda: int(_env("MAX_POSTERS", "2")))

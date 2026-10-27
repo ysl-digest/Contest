@@ -73,8 +73,8 @@ needs_review: bool         review_reasons: [str]
 |---|---|
 | 위치 | dedupe 뒤, fetch 앞. 상세 페이지·포스터를 받기 전에 걸러 요청 수와 VLM 비용을 줄임 |
 | 입력 | 목록 메타데이터(제목·주최·분야 태그)만 |
-| 1차 | `typesafe/jev-1.14` (TypeSafe Jev 결정 모델). OpenRouter `/api/alpha/decisions`에 건별 `noul`(yes/no) 질문 → IT일 확률. p≥0.65면 IT, p≤0.35면 비IT |
-| 2차 | 0.35<p<0.65(애매)이거나 Jev 호출이 실패한 건만 `qwen/qwen3.7-flash`에 40건씩 배치로 다시 판정 |
+| 1차 | `typesafe/jev-1.14` (TypeSafe Jev 결정 모델). OpenRouter `/api/alpha/decisions`에 건별 `noul`(yes/no) 질문 → IT일 확률. p≥0.5면 IT, p≤0.3면 비IT (초기 느슨한 기준, 운영하며 `CLASSIFY_HIGH/LOW` 변수로 상향) |
+| 2차 | 0.3<p<0.5(애매)이거나 Jev 호출이 실패한 건만 `qwen/qwen3.7-flash`에 40건씩 배치로 다시 판정 |
 | 3차 | 2차에서도 답이 없으면 키워드 규칙 |
 | 기준 | AI·데이터·SW개발·해커톤·보안·디지털 서비스 기획은 IT. AI 도구로 만드는 영상·이미지 창작 공모는 비IT |
 | 기록 | 비IT도 `state.json`에 `it:false`로 남겨 재분류하지 않음. VLM이 상세를 보고 `category="비IT"`로 판정한 건도 제외 |
@@ -124,7 +124,7 @@ needs_review: bool         review_reasons: [str]
 1. 위비티·링커리어 이용약관상 수집 허용 범위
 2. GITHUB_TOKEN으로 만든 Issue의 Watch 메일 발송 여부 (첫 실행 때 테스트하고, 안 되면 PAT 또는 GitHub App 사용)
 3. bot 커밋이 60일 비활성 판정에서 활동으로 인정되는지
-4. Jev 판정 품질 (샘플 7건만 확인함). 첫 몇 주는 `-v` 로그의 판정 근거(p값)를 보고 임계값(0.35/0.65)을 조정할 필요가 있음. Decisions API는 alpha 단계라 사양이 바뀔 수 있음 (미확인)
+4. Jev 판정 품질 (샘플 7건만 확인함). 첫 몇 주는 `-v` 로그의 판정 근거(p값)를 보고 임계값(0.3/0.5)을 조정할 필요가 있음. Decisions API는 alpha 단계라 사양이 바뀔 수 있음 (미확인)
 5. 링커리어 `__NEXT_DATA__` 스키마의 안정성 (깨지면 소스 실패로 보고)
 6. Issue 생성 시 없는 라벨(`digest`)이 자동으로 만들어지는지 (미확인. 안 되면 라벨을 수동으로 생성)
 

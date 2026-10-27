@@ -39,6 +39,7 @@ Settings → Secrets and variables → Actions
 | Variable | `VLM_MODEL` | 선택 | 추출 주 모델 (기본 `qwen/qwen3.7-flash`) |
 | Variable | `VLM_FALLBACK_MODEL` | 선택 | 추출 대체 모델 (기본 `deepseek/deepseek-v4.1-flash`) |
 | Variable | `CLASSIFIER_MODEL` | 선택 | IT 분류 결정 모델, Decisions API (기본 `typesafe/jev-1.14`) |
+| Variable | `CLASSIFY_HIGH` / `CLASSIFY_LOW` | 선택 | Jev 확률 기준. high 이상 IT, low 이하 비IT, 사이는 2차 LLM (기본 0.5 / 0.3, 느슨한 초기값) |
 | Variable | `CLASSIFIER_FALLBACK_MODEL` | 선택 | 애매·실패 건 2차 분류 LLM (기본 `qwen/qwen3.7-flash`) |
 
 추가로 Settings → Actions → General → Workflow permissions가 **Read and write**여야 상태 파일을 커밋할 수 있습니다.

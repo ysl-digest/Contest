@@ -46,6 +46,8 @@ jobs:
           VLM_FALLBACK_MODEL: ${{ vars.VLM_FALLBACK_MODEL }}
           CLASSIFIER_MODEL: ${{ vars.CLASSIFIER_MODEL }}
           CLASSIFIER_FALLBACK_MODEL: ${{ vars.CLASSIFIER_FALLBACK_MODEL }}
+          CLASSIFY_LOW: ${{ vars.CLASSIFY_LOW }}
+          CLASSIFY_HIGH: ${{ vars.CLASSIFY_HIGH }}
           MAX_ITEMS: ${{ inputs.max_items }}
         run: |
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
