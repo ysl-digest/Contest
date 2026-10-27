@@ -19,7 +19,7 @@ IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub I
 | 항목 | 결정 |
 |---|---|
 | 소스 | 위비티(wevity.com), 링커리어(linkareer.com) |
-| 분야 | **수집은 전체 분야**. VLM 추출과 알림만 IT·데이터·AI로 제한 (classify 단계, 2026-10-27 변경) |
+| 분야 | **수집은 전체 분야**. classify 단계에서 IT·Non-IT로 나눠 각각 다른 저장소에 발행 (IT: Contest-Subscribe, Non-IT: Contest-Subscribe-Non-IT, 2026-10-27 변경) |
 | 대상(참가 자격) 필터 | 하지 않음. `eligibility` 필드로 표시만 함 |
 
 ### 발송
@@ -30,7 +30,7 @@ IT·데이터·AI 공모전을 매주 모아 VLM으로 구조화하고, GitHub I
 | 구성 | ① 마감임박(7일 이내) ② 나머지(마감일 오름차순). 각 항목에 확인 필요 표시. 운영 메모(이월 건수·수집 실패)와 구독 안내 문구는 본문에 넣지 않음 — 수집 실패는 워크플로 로그로 확인 |
 | 신규 0건 | Issue를 만들지 않음 (로그만 남김) |
 | 라벨 | `digest` 1개. 분야별 라벨은 쓰지 않음 (다이제스트라서 의미가 적음) |
-| 제목 | `주간 공모전 - {월}월 {n}째주 IT·AI 공모전`. 주차는 그 주 목요일이 속한 달 기준(ISO 8601 방식) |
+| 제목 | `주간 공모전 - {월}월 {n}째주 IT·AI 공모전` / `… Non-IT 공모전`. 주차는 그 주 목요일이 속한 달 기준(ISO 8601 방식) |
 | 오염 방지 | 발행 저장소에 상호작용 제한(collaborators_only, 6개월)을 걸고 실제 발행 실행 때마다 갱신. 발행한 Issue는 즉시 lock (2026-10-27, 첫 설정 만료 2027-04-27) |
 
 ### VLM
@@ -86,7 +86,8 @@ needs_review: bool         review_reasons: [str]
 | 2차 | 0.3<p<0.5(애매)이거나 Jev 호출이 실패한 건만 `qwen/qwen3.7-flash`에 40건씩 배치로 다시 판정 |
 | 3차 | 2차에서도 답이 없으면 키워드 규칙 |
 | 기준 | AI·데이터·SW개발·해커톤·보안·디지털 서비스 기획은 IT. AI 도구로 만드는 영상·이미지 창작 공모는 비IT |
-| 기록 | 비IT도 `state.json`에 `it:false`로 남겨 재분류하지 않음. VLM이 상세를 보고 `category="비IT"`로 판정한 건도 제외 |
+| 기록 | 분류 결과는 `state.json`의 `it`에 남겨 재분류하지 않음. IT 트랙에서 VLM이 비IT 분야 category를 고르면 Non-IT 트랙으로 넘김(반대 방향은 없음) |
+| 실행 | classify → publish-it → publish-non-it 세 job을 순서대로. 트랙별 VLM 상한 50건이라 job별 timeout을 둠 |
 | 중복 | 정규화 제목(괄호 부연·기호 제거)이 같으면 소스가 달라도 1건만 발송 |
 | JSON 출력 | 모델이 structured outputs를 지원하면 json_schema, 아니면 json_object + 프롬프트 스키마 (`qwen/qwen3.7-flash`가 여기에 해당 [사실: /models 조회]) |
 

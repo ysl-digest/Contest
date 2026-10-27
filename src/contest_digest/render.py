@@ -8,6 +8,12 @@ from .models import Contest, OtherDate
 
 SOURCE_NAMES = {"wevity": "위비티", "linkareer": "링커리어"}
 
+# 트랙별 (제목 표기, 본문 첫 줄 표기)
+TRACK_LABELS = {
+    "it": ("IT·AI 공모전", "IT·데이터·AI 공모전"),
+    "non-it": ("Non-IT 공모전", "기획·디자인·영상·문학 등 IT 외 분야 공모전"),
+}
+
 
 def _esc(text: str | None) -> str:
     if not text:
@@ -64,12 +70,12 @@ def week_of_month(d: date) -> tuple[int, int]:
     return thursday.month, (thursday.day - 1) // 7 + 1
 
 
-def title(contests: list[Contest], today: date) -> str:
+def title(contests: list[Contest], today: date, track: str = "it") -> str:
     month, week = week_of_month(today)
-    return f"주간 공모전 - {month}월 {week}째주 IT·AI 공모전"
+    return f"주간 공모전 - {month}월 {week}째주 {TRACK_LABELS[track][0]}"
 
 
-def render(contests: list[Contest], today: date, urgent_days: int = 7) -> str:
+def render(contests: list[Contest], today: date, urgent_days: int = 7, track: str = "it") -> str:
     def end(c: Contest) -> date:
         return date.fromisoformat(c.apply_end) if c.apply_end else date.max
 
@@ -78,7 +84,7 @@ def render(contests: list[Contest], today: date, urgent_days: int = 7) -> str:
     rest = [c for c in ordered if c not in urgent]
 
     out = [
-        f"이번 주 새로 수집된 IT·데이터·AI 공모전 **{len(contests)}건**입니다.",
+        f"이번 주 새로 수집된 {TRACK_LABELS[track][1]} **{len(contests)}건**입니다.",
         "",
         "> 아래 정보는 원문과 포스터를 AI로 요약한 것이라 틀릴 수 있습니다. 지원 전에 꼭 원문을 확인하세요.",
         "",

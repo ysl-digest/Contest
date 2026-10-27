@@ -32,6 +32,12 @@ IT_KEYWORDS = [
 # 이 카테고리만으로 구성된 공모전은 키워드가 없어도 IT로 본다
 IT_ONLY_CATEGORIES = {"웹/모바일/IT", "웹/모바일/플래시", "게임/소프트웨어", "과학/공학", "학술", "기타"}
 
+# 발행 트랙. classify 결과(it 여부)로 나뉘어 각자의 저장소에 Issue를 낸다
+TRACKS = ("it", "non-it")
+
+# VLM category 중 비IT 분야. IT 트랙에서 이 값이 나오면 Non-IT 트랙으로 넘긴다
+NON_IT_CATEGORIES = {"기획/마케팅", "디자인/영상", "문학/글쓰기", "창업/경영", "학술/정책", "예체능/기타", "비IT"}
+
 
 @dataclass
 class Settings:
@@ -59,6 +65,10 @@ class Settings:
     github_token: str = field(default_factory=lambda: os.environ.get("ISSUE_TOKEN", ""))
     # Issue를 발행할 저장소 (코드 저장소와 분리). 구독자는 이 저장소를 Watch한다
     issue_repo: str = field(default_factory=lambda: _env("ISSUE_REPO", "yeseo-bot/Contest-Subscribe"))
+    non_it_issue_repo: str = field(default_factory=lambda: _env("NON_IT_ISSUE_REPO", "yeseo-bot/Contest-Subscribe-Non-IT"))
     issue_label: str = "digest"
     state_path: Path = field(default_factory=lambda: Path(_env("STATE_PATH", str(ROOT / "data" / "state.json"))))
     prompt_path: Path = ROOT / "prompts" / "extract.md"
+
+    def repo_for(self, track: str) -> str:
+        return self.issue_repo if track == "it" else self.non_it_issue_repo

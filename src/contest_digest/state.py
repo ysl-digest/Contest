@@ -1,6 +1,7 @@
 """처리한 공모전 ID를 저장소 내 JSON으로 관리한다.
 
-status: sent(발송) · skipped(비IT·마감 등으로 발송 안 함) · pending(IT로 판정됐으나 상한·오류로 이월)
+status: sent(발송) · skipped(마감 등으로 발송 안 함) · pending(분류는 끝났고 발행 대기 중)
+it: IT 트랙(true)·Non-IT 트랙(false) 구분.
 pending은 목록 메타데이터를 함께 저장해, 목록 페이지에서 밀려나도 다음 실행에서 우선 처리한다.
 """
 
@@ -31,9 +32,12 @@ class State:
         """처리가 끝난(다시 볼 필요 없는) 키. pending은 포함하지 않는다."""
         return {k for k, v in self.items.items() if v.get("status") != PENDING}
 
-    def pending(self) -> list[Listing]:
+    def pending(self, is_it: bool | None = None) -> list[Listing]:
+        """발행 대기 건. is_it을 주면 해당 트랙만."""
         out = []
         for v in self.items.values():
+            if is_it is not None and bool(v.get("it")) != is_it:
+                continue
             if v.get("status") == PENDING and v.get("listing"):
                 d = dict(v["listing"])
                 d["apply_end"] = date.fromisoformat(d["apply_end"]) if d.get("apply_end") else None

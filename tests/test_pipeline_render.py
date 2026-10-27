@@ -1,6 +1,6 @@
 from contest_digest.config import Settings
 from contest_digest.models import Contest
-from contest_digest.pipeline import run
+from contest_digest.pipeline import process, run
 from contest_digest.render import render
 from contest_digest.state import State
 
@@ -29,7 +29,6 @@ def test_offline_pipeline_no_llm(http, today):
     result = run(s, http, State(), today, ["wevity", "linkareer"], use_llm=False)
     keys = [c.key for c in result.contests]
     assert set(keys) == {"wevity:900001", "wevity:900002", "linkareer:800001"}
-    assert not result.failures
     assert "가을 시 낭송" not in result.body and "슬로건" not in result.body
     assert result.title.startswith("주간 공모전 - ") and result.title.endswith("째주 IT·AI 공모전")
 
@@ -41,8 +40,13 @@ def test_source_failure_isolated(http, today, monkeypatch):
         raise ValueError("구조 변경")
 
     monkeypatch.setattr(linkareer.LinkareerSource, "collect", boom)
-    result = run(Settings(), http, State(), today, ["wevity", "linkareer"], use_llm=False)
-    assert "linkareer" in result.failures and len(result.contests) == 2
+    from contest_digest.pipeline import classify_new
+
+    state = State()
+    cr = classify_new(Settings(), http, state, today, ["wevity", "linkareer"], use_llm=False)
+    assert "linkareer" in cr.failures
+    result = process(Settings(), http, state, today, "it", use_llm=False)
+    assert len(result.contests) == 2
 
 
 def test_max_items_defers_to_pending_and_prioritizes_next_run(http, today, monkeypatch):
@@ -77,7 +81,7 @@ def test_max_items_defers_to_pending_and_prioritizes_next_run(http, today, monke
     save_marks(state, r2, nxt, issue=2)
     assert state.items["wevity:900002"]["status"] == "sent" and "listing" not in state.items["wevity:900002"]
     assert state.items["wevity:900002"]["first_seen"] == today.isoformat()  # 최초 발견일 유지
-    assert state.pending() == []
+    assert state.pending(True) == []  # 비IT 건은 Non-IT 대기열에 남아 있다
 
 
 def test_expired_pending_is_dropped(today):
@@ -101,18 +105,47 @@ def test_pipeline_with_classifier_marks_non_it(http, today, tmp_path):
             return {it.key: Verdict(it.key in {"wevity:900001", "linkareer:800001"}, "", "fake") for it in listings}
 
     s = Settings()
-    result = run(s, http, State(), today, ["wevity", "linkareer"], use_llm=False, classifier=FakeClassifier())
-    assert {c.key for c in result.contests} == {"wevity:900001", "linkareer:800001"}
-    assert result.non_it == 3 and result.collected == 6
-
     state = State()
+    result = run(s, http, state, today, ["wevity", "linkareer"], use_llm=False, classifier=FakeClassifier())
+    assert {c.key for c in result.contests} == {"wevity:900001", "linkareer:800001"}
     save_marks(state, result, today, issue=7)
     assert state.items["wevity:900001"]["issue"] == 7 and state.items["wevity:900001"]["it"] is True
-    assert state.items["wevity:900003"]["it"] is False and state.items["wevity:900003"]["issue"] is None
+    # 비IT는 Non-IT 트랙 대기열로
+    assert {it.key for it in state.pending(False)} == {"wevity:900002", "wevity:900003", "linkareer:800002"}
     assert state.items["wevity:900003"]["title"] == "우리 동네 슬로건 공모전"
+
+    non_it = process(s, http, state, today, "non-it", use_llm=False)
+    # 800002는 상세 fixture가 없어 상세 수집 실패 → 대기열에 남는다
+    assert {c.key for c in non_it.contests} == {"wevity:900002", "wevity:900003"} and non_it.deferred == 1
+    assert non_it.title.endswith("Non-IT 공모전") and "IT 외 분야" in non_it.body
+    save_marks(state, non_it, today, issue=3)
+    assert state.items["wevity:900003"]["it"] is False and state.items["wevity:900003"]["issue"] == 3
+    assert [it.key for it in state.pending()] == ["linkareer:800002"]
     # 다음 실행에서는 모두 기처리
     again = run(s, http, state, today, ["wevity", "linkareer"], use_llm=False, classifier=FakeClassifier())
     assert again.contests == [] and again.marks == []
+
+
+def test_it_track_moves_non_it_category(http, today):
+    from contest_digest.pipeline import save_marks
+
+    class FakeExtractor:
+        def extract(self, detail, today):
+            from contest_digest.extract import metadata_only
+
+            c = metadata_only(detail)
+            c.category = "디자인/영상" if detail.listing.key == "wevity:900002" else "AI/데이터"
+            return c
+
+    from contest_digest.pipeline import classify_new
+
+    s = Settings()
+    state = State()
+    classify_new(s, http, state, today, ["wevity", "linkareer"], use_llm=False)
+    r = process(s, http, state, today, "it", use_llm=False, extractor=FakeExtractor())
+    assert "wevity:900002" not in {c.key for c in r.contests} and r.moved == 1
+    save_marks(state, r, today, issue=1)
+    assert "wevity:900002" in {it.key for it in state.pending(False)}
 
 
 def test_render_other_date_period(today):
@@ -129,6 +162,7 @@ def test_title_week_of_month():
     from contest_digest.render import title, week_of_month
 
     assert title([], date(2026, 10, 12)) == "주간 공모전 - 10월 3째주 IT·AI 공모전"
+    assert title([], date(2026, 10, 12), "non-it") == "주간 공모전 - 10월 3째주 Non-IT 공모전"
     assert week_of_month(date(2026, 10, 1)) == (10, 1)   # 목요일
     assert week_of_month(date(2026, 10, 26)) == (10, 5)
     assert week_of_month(date(2026, 11, 30)) == (12, 1)  # 그 주 목요일이 12월
