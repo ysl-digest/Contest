@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 
 from .models import Contest, OtherDate
 
@@ -55,8 +55,18 @@ def _block(c: Contest, today: date) -> str:
     return "\n".join(lines)
 
 
+def week_of_month(d: date) -> tuple[int, int]:
+    """(월, 주차). 월~일 한 주를 그 주 목요일이 속한 달의 주로 본다 (ISO 8601과 같은 기준).
+
+    예: 2026-11-30(월)이 속한 주의 목요일은 12-03이므로 (12, 1).
+    """
+    thursday = d + timedelta(days=3 - d.weekday())
+    return thursday.month, (thursday.day - 1) // 7 + 1
+
+
 def title(contests: list[Contest], today: date) -> str:
-    return f"[공모전 주간] {today.isoformat()} ({len(contests)}건)"
+    month, week = week_of_month(today)
+    return f"주간 공모전 - {month}월 {week}째주 IT 공모전"
 
 
 def render(contests: list[Contest], today: date, urgent_days: int = 7) -> str:
