@@ -2,8 +2,8 @@
 
 공모전을 매주 모아 IT·Non-IT로 나눠 GitHub Issue 다이제스트로 발행하는 봇의 **코드 저장소**입니다.
 
-- IT·데이터·AI 공모전 구독: **[ysl-digest/Contest-Subscribe-IT](https://github.com/ysl-digest/Contest-Subscribe-IT)** ← Watch
-- 그 외 분야 공모전 구독: **[ysl-digest/Contest-Subscribe-Non-IT](https://github.com/ysl-digest/Contest-Subscribe-Non-IT)** ← Watch
+- IT·데이터·AI 공모전 구독: **[ysl-bots/Contest-Subscribe-IT](https://github.com/ysl-bots/Contest-Subscribe-IT)** ← Watch
+- 그 외 분야 공모전 구독: **[ysl-bots/Contest-Subscribe-Non-IT](https://github.com/ysl-bots/Contest-Subscribe-Non-IT)** ← Watch
 - 이 저장소: 수집·분류·추출 코드, 주간 워크플로, 처리 이력(`data/state.json`)
 
 ## 동작 방식
@@ -25,9 +25,9 @@ Settings → Secrets and variables → Actions
 | 종류 | 이름 | 필수 | 설명 |
 |---|---|---|---|
 | Secret | `OPENROUTER_API_KEY` | ✅ | OpenRouter API 키. 없으면 VLM 없이 메타데이터만 게시 |
-| Secret | `ISSUE_TOKEN` | ✅ | 발행 저장소용 fine-grained PAT (Resource owner: `ysl-digest`, Repository access: `Contest-Subscribe-IT`, `Contest-Subscribe-Non-IT`). Permissions: **Issues: Read and write**(발행·잠금), **Administration: Read and write**(상호작용 제한 갱신) |
-| Variable | `ISSUE_REPO` | 선택 | IT 발행 저장소 (기본 `ysl-digest/Contest-Subscribe-IT`) |
-| Variable | `NON_IT_ISSUE_REPO` | 선택 | Non-IT 발행 저장소 (기본 `ysl-digest/Contest-Subscribe-Non-IT`) |
+| Secret | `ISSUE_TOKEN` | ✅ | 발행 저장소용 fine-grained PAT (Resource owner: `ysl-bots`, Repository access: `Contest-Subscribe-IT`, `Contest-Subscribe-Non-IT`). Permissions: **Issues: Read and write**(발행·잠금), **Administration: Read and write**(상호작용 제한 갱신) |
+| Variable | `ISSUE_REPO` | 선택 | IT 발행 저장소 (기본 `ysl-bots/Contest-Subscribe-IT`) |
+| Variable | `NON_IT_ISSUE_REPO` | 선택 | Non-IT 발행 저장소 (기본 `ysl-bots/Contest-Subscribe-Non-IT`) |
 | Variable | `VLM_MODEL` | 선택 | 추출 주 모델 (기본 `qwen/qwen3.7-flash`) |
 | Variable | `VLM_FALLBACK_MODEL` | 선택 | 추출 대체 모델 (기본 `deepseek/deepseek-v4.1-flash`) |
 | Variable | `CLASSIFIER_MODEL` | 선택 | IT 분류 결정 모델, Decisions API (기본 `typesafe/jev-1.14`) |

@@ -23,7 +23,7 @@ def test_publish_calls(monkeypatch):
 
     monkeypatch.setattr(publish.requests, "post", fake("POST"))
     monkeypatch.setattr(publish.requests, "put", fake("PUT"))
-    repo = "ysl-digest/Contest-Subscribe-IT"
+    repo = "ysl-bots/Contest-Subscribe-IT"
     assert publish.create_issue("t", repo, "제목", "본문", ["digest"]) == 3
     publish.lock_issue("t", repo, 3)
     assert publish.renew_interaction_limit("t", repo) == "2027-04-27T00:00:00Z"
